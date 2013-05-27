@@ -8,6 +8,8 @@ function [xyz] = range2xyz(im)
 
 [y,x] = ind2sub(size(im), 1:numel(im));
 
+% In the Z direction a value of 255 is taken as 0 mm. Use imcomplement to
+% revervse image.
 
 
 xyz = [x(:).*0.32, y(:).*0.32, (im(:).*255).*0.32];

@@ -43,7 +43,8 @@ for i = 1:noImages
         fprintf(icpEstimateOuputFileID,'%d\t%f\t%f\n',i,icpEstimate(1),icpEstimate(2));
         
         %Save aligned image
-        save(alignedDataFile,'alignedXYZ');
+        save(al
+        ignedDataFile,'alignedXYZ');
        
         fprintf('Processed image %d\n',i)
     end
