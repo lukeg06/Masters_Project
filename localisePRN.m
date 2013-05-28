@@ -2,6 +2,10 @@ function [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,displayImag
 addpath('C:\VSG_IPA_toolbox\')
 
 % This function is used to detect the precise location of the pronasale (PRN).
+% An nose tip estimate is provided which is based on the location of a
+% template nose tip which was use for ICP registration. This point is used
+% to define a search region. This region is searched for a peak Gaussian
+% curvatue. This is take to be the location of the pronasale.
 %
 %function [PRNLocation] = localisePRN(imageIn,estimatedLocation,dispayImage)
 %
@@ -13,7 +17,7 @@ addpath('C:\VSG_IPA_toolbox\')
 %       
 %       displayImage: Show detected location and gradient images.
 %Outputs,
-%       prnLocation: Location of the PRN in mm.
+%       prnLocation: Location of the PRN in mm. 
 %
 
 
@@ -35,15 +39,15 @@ imageMasked((estimatedLocation_pixels(2) - round(25/0.32)):(estimatedLocation_pi
 mat1 = ones(size(imageMasked)).*val;
 mat2 = double(bsxfun(@eq,mat1,imageMasked));
 % Find larget blob
-[mat3] = vsg('BiggestBlob',mat2);
+[mat3] = vsg('BiggestBlob',uint8(mat2.*255));
 if sum(mat3(:)) ~= 0
     [centroid_mat] = vsg('Centroid',mat3);
     [p1] = vsg('FWP',centroid_mat);
 else
-    p1 = [i j];
+    p1 = [j i];
 end
 
-PRNLocation = pixel2mm([p1(2) p1(1)]);
+PRNLocation = pixel2mm([p1(1) p1(2)]);
 
 %Display images
 if strcmp(displayImage,'true')
