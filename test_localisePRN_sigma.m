@@ -33,11 +33,11 @@ for sigma = 1:20
     std_x = std(x_error);
     std_y = std(y_error);
     std_rad = std(euclidean_error);
-    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',sigma,std_x,std_y,std_rad);
+    fprintf(test_localisePRN_sigmaResultsFileID,'%d\t%f\t%f\t%f\n',sigma,std_x,std_y,std_rad);
 end
 
 
 
 fclose(test_localisePRN_sigmaResultsFileID);
 
-copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localisePRN_sigmaResults.txt')
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults_sigma.txt.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localisePRN_sigmaResults.txt')

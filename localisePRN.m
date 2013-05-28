@@ -1,4 +1,5 @@
 function [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,displayImage)
+addpath('C:\VSG_IPA_toolbox\')
 
 % This function is used to detect the precise location of the pronasale (PRN).
 %
@@ -27,10 +28,22 @@ imageMasked = zeros(size(imageIn));
 imageMasked((estimatedLocation_pixels(2) - round(25/0.32)):(estimatedLocation_pixels(2) + round(25/0.32)),(estimatedLocation_pixels(1) - round(21/0.32)):(estimatedLocation_pixels(1) + round(21/0.32))) = K((estimatedLocation_pixels(2) - round(25/0.32)):(estimatedLocation_pixels(2) + round(25/0.32)),(estimatedLocation_pixels(1) - round(21/0.32)):(estimatedLocation_pixels(1) + round(21/0.32)));
 
 %Find location of global maximum
+
 [val ind]= max(imageMasked(:));
 [i,j] = ind2sub(size(imageMasked),ind);
+% Isolate all pixels with maximum value
+mat1 = ones(size(imageMasked)).*val;
+mat2 = double(bsxfun(@eq,mat1,imageMasked));
+% Find larget blob
+[mat3] = vsg('BiggestBlob',mat2);
+if sum(mat3(:)) ~= 0
+    [centroid_mat] = vsg('Centroid',mat3);
+    [p1] = vsg('FWP',centroid_mat);
+else
+    p1 = [i j];
+end
 
-PRNLocation = pixel2mm([j i]);
+PRNLocation = pixel2mm([p1(2) p1(1)]);
 
 %Display images
 if strcmp(displayImage,'true')

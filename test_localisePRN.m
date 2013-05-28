@@ -35,6 +35,7 @@ for i = 1:noImages
    euclidean_error = norm(PRNLocation - landmarkLocations(19,:,i));
    
    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
+   fprintf('%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
    fprintf('Processing image %d\n',i)
 end
 
