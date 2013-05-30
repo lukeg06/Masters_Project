@@ -3,13 +3,14 @@
 
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
-DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
+%DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
 outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\';
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-[imageList,noImages]= getDBInfo(DBpath,'range');
-
+%[imageList,noImages]= getDBInfo(DBpath,'range');
+ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
+noImages = size(imageList,1);
 
 %open files for writing results
 test_localisePRN_sigmaResultsFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults_sigma.txt','w');
@@ -21,7 +22,7 @@ randomSample = randperm(1149);
 for sigma = 1:20
     y=1;
     for i = (1:100)
-     imageIn = im2double(imread(strcat(DBpath,imageList(i,:))));
+     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
      [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,'false');
 
       %Calute error & print to file

@@ -54,11 +54,33 @@ imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
 % IEEE Transactions on 12.12 (1990): 1138-1149.
 
 % Generate Freeman chain code
-noseCountour = (bwboundaries(imageNoseEdge,8));
-noseCountour1 = noseCountour{:};
-chainCode = chaincode([noseCountour1(end:-1:1,1) noseCountour1(end:-1:1,2)],'true');
-
-sigma = 8;
-a = chainCode.ucode;
+noseContour = (bwboundaries(imageNoseEdge,8));
+noseContoura = noseContour{:};
+noseContour1 = noseContoura(1:sum(imageNoseEdge(:)));
+chainCode = chaincode([noseContour1(end:-1:1,1) noseContour1(end:-1:1,2)],'true');
+%chainCode = chaincode([noseCountour1(:,1) noseCountour1(:,2)],'true');
+sigma = 5;
+a = 1:round(3.75*sigma);
 g = (-a./((sigma.^3).*sqrt(2*pi))).*exp((-a.^2)./(2*(sigma.^2)));
+g_norm = g./sum(g(:));
+
+%%
+dog = conv(chainCode.ucode,g_norm);
+for i = 1:size(dog(:))
+   if dog(i) < 0.05
+       dog(i) = 0;
+   end
+end
+
+dog_trunc = dog(1:end-size(g,2)+1);
+[val ind] = findpeaks(dog_trunc);
+
+figure,imshow(imageNoseEdge);
+hold on;
+for i = 1:size(noseContour1,1)
+   plot(noseCountour1(i,2),noseContour1(i,1),'*m'); 
+end
+hold off;
+    
+
 

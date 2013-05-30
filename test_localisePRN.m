@@ -11,7 +11,9 @@ outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Result
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-[imageList,noImages]= getDBInfo(DBpath,'range');
+%[imageList,noImages]= getDBInfo(DBpath,'range');
+imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
+noImages = size(imageList,1);
 
 
 %open files for writing results
@@ -23,7 +25,7 @@ fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(
 estimatedLocation = landmarkLocations(19,:,996);
 
 for i = 1:noImages
- imageIn = im2double(imread(strcat(DBpath,imageList(i,:))));
+ imageIn = im2double(imread(strcat(DBpath,imageList{i})));
  [PRNLocation] = localisePRN(imageIn,estimatedLocation,16,'false');
  
   %Write PRNLocation to file

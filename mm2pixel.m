@@ -1,3 +1,3 @@
 function [outputValues] = mm2pixel(inputValue)
 
-outputValues = inputValue./0.32;
+outputValues = round(inputValue./0.32);

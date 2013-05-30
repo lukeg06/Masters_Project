@@ -4,11 +4,8 @@
 %       DBpath: Path to folder containng the images to be read. 
 %
 %       imageType: 'Range' or 'Portrait'
-%
-%Output,
-%       imageList: List of all images in DB.
-%
-%       noImages: Number of images in db.
+%Returns a list of
+%the image names and the number of images. Image type = 'Range' or 'Portrait'
 
 function [imageList,noImages]= getDBInfo(DBpath,imageType)
 
