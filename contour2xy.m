@@ -1,0 +1,73 @@
+function [coordinates_out] = contour2xy(contourImage)
+
+% [imageList,noImages]= getDBInfo(DBpath,imageType)
+%
+%Input,
+%       ContourImage: Binary image in containing a single contour
+%
+%       
+%
+%Output,
+%       coordinates: [y,x] coodinates of each pixel in the contour. Works
+%       from one limbend of the contour to the other.
+
+
+[imageLimbEnds] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
+
+% Check to see that contour is valid
+if(sum(imageLimbEnds(:)) ~= 2)
+    
+    error('Issue with contour. Possibly more than one contour present');
+end
+
+
+
+%% Find start and end point coordinates
+[startPt] = vsg('FWP',imageLimbEnds.*255);
+startPt(1) = startPt(1)+1;
+startPt(2) = startPt(2)+1;
+temp = imageLimbEnds.*255;
+temp(startPt(2),startPt(1)) = 0;
+[endPt] =  vsg('FWP',temp);
+endPt(1) = endPt(1)+1;
+endPt(2) = endPt(2)+1;
+
+%% Start at startPoint and move along point to end point
+currentPt = startPt;
+previousPt = 0;
+found = 0;
+coordinates(1,:)= startPt';
+k = 2;
+while ~isequal(currentPt,endPt)
+    for i = -1:1
+        
+        for j = -1:1
+           testPt = [currentPt(1)+i;currentPt(2)+j];
+           if ~isequal(testPt,previousPt)
+              if ~isequal(testPt,currentPt)
+                   if (contourImage(testPt(2),testPt(1)) == 1)
+                            nextPt = testPt;
+                            found = 1;
+                            break;
+                   end
+              end
+           end
+           
+        end
+        if found == 1
+            found = 0;
+            break;
+        end
+        
+    end
+    
+   
+    previousPt = currentPt;
+    currentPt = nextPt;
+    coordinates(k,:)= nextPt';
+    k = k+1;
+end
+
+%Swap x and y and reverse order
+%coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
+coordinates_out = [coordinates(:,2),coordinates(:,1)];

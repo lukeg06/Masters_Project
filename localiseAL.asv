@@ -28,7 +28,7 @@ imageEdge = edge(imageIn,'log',0,7);
 %Define search region around  prn.
 imageMasked = zeros(size(imageIn));
 prn_coordinates = round(mm2pixel(PRNLocation)); % round before to keep matlab happy
-imageMasked((prn_coordinates(2) - round(25/0.32)):(prn_coordinates(2) + round(25/0.32)),(prn_coordinates(1) - round(21/0.32)):(prn_coordinates(1) + round(21/0.32))) = imageEdge((prn_coordinates(2) - round(25/0.32)):(prn_coordinates(2) + round(25/0.32)),(prn_coordinates(1) - round(21/0.32)):(prn_coordinates(1) + round(21/0.32)));
+imageMasked((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),(prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32))) = imageEdge((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),(prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32)));
 
 %
 %% Find the edges of the nose by moving out horizontally from the icp estimage
@@ -54,13 +54,10 @@ imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
 % IEEE Transactions on 12.12 (1990): 1138-1149.
 
 % Generate Freeman chain code
-noseContour = (bwboundaries(imageNoseEdge,8));
-noseContoura = noseContour{:};
-noseContour1 = noseContoura(1:sum(imageNoseEdge(:)));
-chainCode = chaincode([noseContour1(end:-1:1,1) noseContour1(end:-1:1,2)],'true');
-%chainCode = chaincode([noseCountour1(:,1) noseCountour1(:,2)],'true');
+noseContour = contour2xy(imageNoseEdge);
+chainCode = chaincode([noseContour(:,1) noseContour(:,2)],'true');
 sigma = 5;
-a = 1:round(3.75*sigma);
+a = -round(3.75*sigma):round(3.75*sigma);
 g = (-a./((sigma.^3).*sqrt(2*pi))).*exp((-a.^2)./(2*(sigma.^2)));
 g_norm = g./sum(g(:));
 
@@ -77,8 +74,8 @@ dog_trunc = dog(1:end-size(g,2)+1);
 
 figure,imshow(imageNoseEdge);
 hold on;
-for i = 1:size(noseContour1,1)
-   plot(noseCountour1(i,2),noseContour1(i,1),'*m'); 
+for i = 1:size(ind,2)
+   plot(noseContour(ind,2),noseContour(ind,1),'*m'); 
 end
 hold off;
     

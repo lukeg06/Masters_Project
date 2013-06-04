@@ -3,7 +3,7 @@
 
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
-%DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
+DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
 outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\';
 
 %load landmarks & image list.
@@ -41,4 +41,4 @@ end
 
 fclose(test_localisePRN_sigmaResultsFileID);
 
-copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults_sigma.txt.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localisePRN_sigmaResults.txt')
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults_sigma.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localisePRN_sigmaResults.txt')

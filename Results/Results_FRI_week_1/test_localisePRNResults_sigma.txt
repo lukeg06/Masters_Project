@@ -1,0 +1,2 @@
+No.	X Std(mm)	Y Std(mm)	Rad Std(mm)
+1	5.242398	2.615259	4.858955

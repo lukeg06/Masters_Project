@@ -24,9 +24,9 @@ fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(
 %set location of template PRN
 estimatedLocation = landmarkLocations(19,:,996);
 
-for i = 1:noImages
+for i = 1:2
  imageIn = im2double(imread(strcat(DBpath,imageList{i})));
- [PRNLocation] = localisePRN(imageIn,estimatedLocation,16,'false');
+ [PRNLocation] = localisePRN(imageIn,estimatedLocation,14,'false');
  
   %Write PRNLocation to file
   fprintf(prnLocationFileID,'%d\t%f\t%f\n',i,PRNLocation(1),PRNLocation(2));
@@ -45,4 +45,6 @@ end
 fclose(prnLocationFileID);
 fclose(test_localisePRNResultsFileID);
 
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\prnLocations.txt','C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\PRN_Results\prnLocations_centroid.txt')
 copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localisePRNResults.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localisePRNResults.txt')
+
