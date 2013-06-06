@@ -14,7 +14,26 @@ function [coordinates_out] = contour2xy(contourImage)
 
 [imageLimbEnds] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
 
+% Seach for [0 0 0
+%            0 1 0
+%            1 0 1]
+% and rotational varients which could lead to false detection of limb ends.
+
+a = [0 0 0;0 1 0;1 0 1];
+b0 = imerode(double(contourImage),a);
+b90 = imerode(double(contourImage),rot90(a,1));
+b180 = imerode(double(contourImage),rot90(a,2));
+b270 = imerode(double(contourImage),rot90(a,3));
+
+
+b = b0|b90|b180|b270;
+c = and(imageLimbEnds,b);
+
+imageLimbEnds = xor(c,imageLimbEnds);
+
 % Check to see that contour is valid
+
+
 if(sum(imageLimbEnds(:)) ~= 2)
     
     error('Issue with contour. Possibly more than one contour present');
@@ -36,6 +55,7 @@ endPt(2) = endPt(2)+1;
 currentPt = startPt;
 previousPt = 0;
 found = 0;
+previousPreviousPt = 0;
 coordinates(1,:)= startPt';
 k = 2;
 while ~isequal(currentPt,endPt)
@@ -44,13 +64,15 @@ while ~isequal(currentPt,endPt)
         for j = -1:1
            testPt = [currentPt(1)+i;currentPt(2)+j];
            if ~isequal(testPt,previousPt)
-              if ~isequal(testPt,currentPt)
-                   if (contourImage(testPt(2),testPt(1)) == 1)
-                            nextPt = testPt;
-                            found = 1;
-                            break;
-                   end
-              end
+               if ~isequal(previousPreviousPt,testPt)
+                  if ~isequal(testPt,currentPt)
+                       if (contourImage(testPt(2),testPt(1)) == 1)
+                                nextPt = testPt;
+                                found = 1;
+                                break;
+                       end
+                  end
+               end
            end
            
         end
@@ -61,7 +83,7 @@ while ~isequal(currentPt,endPt)
         
     end
     
-   
+   previousPreviousPt = previousPt;
     previousPt = currentPt;
     currentPt = nextPt;
     coordinates(k,:)= nextPt';

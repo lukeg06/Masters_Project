@@ -8,7 +8,7 @@ outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Result
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-%[imageList,noImages]= getDBInfo(DBpath,'range');
+[dbList,~]= getDBInfo(DBpath,'range');
  imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
@@ -24,11 +24,12 @@ for sigma = 1:20
     for i = (1:100)
      imageIn = im2double(imread(strcat(DBpath,imageList{i})));
      [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,'false');
-
+        
+      ind = strmatch(imageList{i},dbList);
       %Calute error & print to file
-       x_error(y) = abs(PRNLocation(1) - landmarkLocations(19,1,i));
-       y_error(y) = abs(PRNLocation(2) - landmarkLocations(19,2,i));
-       euclidean_error(y) = norm(PRNLocation - landmarkLocations(19,:,i));
+       x_error(y) = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
+       y_error(y) = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
+       euclidean_error(y) = norm(PRNLocation - landmarkLocations(19,:,ind));
         y= y+1;
     end
     std_x = std(x_error);

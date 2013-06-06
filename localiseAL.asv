@@ -1,12 +1,12 @@
-function [ALLocation] = localiseAL(imageIn,PRNLocation,displayImage)
-addpath('./toolboxes/chaincode/')
-% function [ALLocation] localiseAL(imageIn,prnLocation,dispayImage)
+% function [ALLocation] = localiseAL(imageIn,prnLocation,dispayImage)
 %
 % This function is used to localise the left alare and right alare. The
 % function uses the location of the pronasale to define a search region for
 % the nose corners. A Laplacian of Gaussian edge detector is used on this
-% search region. The nose width points are taken to be the widest edge
-% points, closest to the prn in the vertical direction.
+% search region. Critical points are detected by examining the curvature
+% of the nose contour. Points with the highest negative curvature are taken
+% to be critical points. The nose width points are taken to be the widest
+% critical points, closest to the prn in the vertical direction.
 %
 % Inputs,
 %       imageIn: The range image of subject in question.
@@ -20,6 +20,10 @@ addpath('./toolboxes/chaincode/')
 %       ALLocation: Location of the nose width points. A 2 x 2 matrix. Left
 %       coordinates on first row.
 
+
+
+function [ALLocation] = localiseAL(imageIn,PRNLocation,displayImage)
+addpath('./toolboxes/chaincode/')
 
 
 imageEdge = edge(imageIn,'log',0,7);
@@ -62,22 +66,74 @@ g = (-a./((sigma.^3).*sqrt(2*pi))).*exp((-a.^2)./(2*(sigma.^2)));
 g_norm = g./sum(g(:));
 
 %%
-dog = conv(chainCode.ucode,g_norm);
+dog = conv(chainCode.ucode,g_norm,'same');
 for i = 1:size(dog(:))
    if dog(i) < 0.05
        dog(i) = 0;
    end
 end
 
-dog_trunc = dog(1:end-size(g,2)+1);
-[val ind] = findpeaks(dog_trunc);
 
-figure,imshow(imageNoseEdge);
-hold on;
-for i = 1:size(ind,2)
-   plot(noseContour(ind,2),noseContour(ind,1),'*m'); 
+[val ind] = findpeaks(dog);
+criticalPoints = zeros(size(ind,2),2);
+y = 1;
+for i = ind(1:end)
+    criticalPoints(y,:) = [noseContour(i,2) noseContour(i,1)];
+    y = y+1;
 end
-hold off;
+% figure,imshow(imageNoseEdge);
+% hold on;
+% for i = 1:size(ind,2)
+%    plot(noseContour(ind,2),noseContour(ind,1),'*m'); 
+% end
+% hold off;
+
+
+% Locate leftmost and rightmost critical points which are closest to the
+% PRN along the vertical direction. Go left and right 1st up and down
+
+% 
+rightInds = find(criticalPoints(:,1)>prn_coordinates(1));
+leftInds = find(criticalPoints(:,1)<prn_coordinates(1));
+
+rightPts = sort(criticalPoints(rightInds,:),2);
+leftPts = sort(criticalPoints(leftInds,:),2);
+
+noseContour_rev = [noseContour(:,2),noseContour(:,1)]; 
+contourInds = find(noseContour_rev(:,2) == prn_coordinates(2));
+
+%% Sort to keep in order
+contourPts = sort(noseContour_rev(contourInds,:),2);
+
+indLeft1 = find(leftPts(:,1)>= contourPts(1,1),1,'first');
+indLeft2 = find(leftPts(:,1)< contourPts(1,1),1,'first');
+possibleLeft = [leftPts(indLeft1,:);leftPts(indLeft2,:)];
+
+[~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
+
+leftAL =  possibleLeft(indLeftFinal,:);
+
+%%
+indRight1 = find(rightPts(:,1)>= contourPts(2,1),1,'first');
+indRight2 = find(rightPts(:,1)< contourPts(2,1),1,'first');
+possibleRight = [rightPts(indRight1,:);rightPts(indRight2,:)];
+
+[~,indRightFinal] = min(abs((possibleRight(:,2)- prn_coordinates(2))));
+
+
+%% 
+rightAL =  possibleRight(indRightFinal,:);
+
+ALLocation =  [pixel2mm(leftAL);pixel2mm(rightAL)];
+
+
+% Display 
+if strcmp(displayImage,'true')
+    figure,
+    subplot(2,2,1),imagesc(imageIn),title('Input Image');
+    subplot(2,2,2),imagesc(ima),title('Gaussian Curvature');
+    subplot(2,2,3),imagesc(imageMasked),title('Search Region');
+    subplot(2,2,4),imshow(imageIn),title('PRN Location');
+    hold on; plot(j,i,'*m'); hold off;
     
-
-
+end

@@ -11,7 +11,7 @@ outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Result
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-%[imageList,noImages]= getDBInfo(DBpath,'range');
+[dbList,~]= getDBInfo(DBpath,'range');
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
@@ -24,21 +24,22 @@ fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(
 %set location of template PRN
 estimatedLocation = landmarkLocations(19,:,996);
 
-for i = 1:2
+for i = 1:noImages
  imageIn = im2double(imread(strcat(DBpath,imageList{i})));
  [PRNLocation] = localisePRN(imageIn,estimatedLocation,14,'false');
  
   %Write PRNLocation to file
   fprintf(prnLocationFileID,'%d\t%f\t%f\n',i,PRNLocation(1),PRNLocation(2));
   
+  ind = strmatch(imageList{i},dbList);
   %Calute error & print to file
-   x_error = abs(PRNLocation(1) - landmarkLocations(19,1,i));
-   y_error = abs(PRNLocation(2) - landmarkLocations(19,2,i));
-   euclidean_error = norm(PRNLocation - landmarkLocations(19,:,i));
+   x_error = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
+   y_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
+   euclidean_error = norm(PRNLocation - landmarkLocations(19,:,ind));
    
    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
-   fprintf('%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
-   fprintf('Processing image %d\n',i)
+   %fprintf('%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
+   %fprintf('Processing image %d\n',i)
 end
 
 
