@@ -32,7 +32,10 @@ imageEdge = edge(imageIn,'log',0,7);
 %Define search region around  prn.
 imageMasked = zeros(size(imageIn));
 prn_coordinates = round(mm2pixel(PRNLocation)); % round before to keep matlab happy
-imageMasked((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),(prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32))) = imageEdge((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),(prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32)));
+imageMasked((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),...
+    (prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32))) ...
+    = imageEdge((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),...
+    (prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32)));
 
 %
 %% Find the edges of the nose by moving out horizontally from the icp estimage
@@ -94,29 +97,19 @@ leftInds = find(criticalPoints(:,1)<prn_coordinates(1));
 rightPts = sort(criticalPoints(rightInds,:),2);
 leftPts = sort(criticalPoints(leftInds,:),2);
 
-noseContour_rev = [noseContour(:,2),noseContour(:,1)]; 
-contourInds = find(noseContour_rev(:,2) == prn_coordinates(2));
-
-%% Sort to keep in order
-contourPts = sort(noseContour_rev(contourInds,:),2);
-
-indLeft1 = find(leftPts(:,1)>= contourPts(1,1),1,'first');
-indLeft2 = find(leftPts(:,1)< contourPts(1,1),1,'first');
-possibleLeft = [leftPts(indLeft1,:);leftPts(indLeft2,:)];
+indLeft = find(leftPts(:,1)<= prn_coordinates(1),2,'last');
+possibleLeft = [leftPts(indLeft,:)];
 
 [~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
 
 leftAL =  possibleLeft(indLeftFinal,:);
 
-%%
-indRight1 = find(rightPts(:,1)>= contourPts(2,1),1,'first');
-indRight2 = find(rightPts(:,1)< contourPts(2,1),1,'first');
-possibleRight = [rightPts(indRight1,:);rightPts(indRight2,:)];
+%
+indRight = find(rightPts(:,1)>= prn_coordinates(1),2,'last');
+possibleRight = rightPts(indRight,:);
 
 [~,indRightFinal] = min(abs((possibleRight(:,2)- prn_coordinates(2))));
 
-
-%% 
 rightAL =  possibleRight(indRightFinal,:);
 
 ALLocation =  [pixel2mm(leftAL);pixel2mm(rightAL)];

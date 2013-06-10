@@ -30,10 +30,11 @@ fprintf(test_localiseALRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Er
 fprintf(test_localiseALLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
 for i = 1:noImages
+
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [ALLocation] = localiseAL(imageIn,prnLocation,'false');
-    
+    [ALLocation] = localiseAL(imageIn,prnLocation,'true');
+    pause;
     
    ind = strmatch(imageList{i},dbList);
   %Calute error & print to file
@@ -55,3 +56,6 @@ end
 fclose(alLocationFileID);
 fclose(test_localiseALRightResultsFileID);
 fclose(test_localiseALLeftResultsFileID);
+
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseALRightResults.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localiseAL_right.txt')
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseALLeftResults.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localiseAL_left.txt')
