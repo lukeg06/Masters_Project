@@ -33,8 +33,13 @@ for i = 1:noImages
 
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [ALLocation] = localiseAL(imageIn,prnLocation,'true');
-    pause;
+    [ALLocation] = localiseAL2(imageIn,prnLocation,'false');
+    if ALLocation == 0
+         fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+         fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+           fprintf('%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+           continue;
+    end
     
    ind = strmatch(imageList{i},dbList);
   %Calute error & print to file
