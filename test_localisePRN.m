@@ -26,7 +26,7 @@ estimatedLocation = landmarkLocations(19,:,996);
 
 for i = 1:noImages
  imageIn = im2double(imread(strcat(DBpath,imageList{i})));
- [PRNLocation] = localisePRN(imageIn,estimatedLocation,13,'false');
+ [PRNLocation] = localisePRN(imageIn,estimatedLocation,14,'false');
  
   %Write PRNLocation to file
   fprintf(prnLocationFileID,'%d\t%f\t%f\n',i,PRNLocation(1),PRNLocation(2));

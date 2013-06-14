@@ -64,21 +64,16 @@ leftInds = find(criticalPoints(:,1)<prn_coordinates(1));
 rightPts = sortrows(criticalPoints(rightInds,:),1);
 leftPts = sortrows(criticalPoints(leftInds,:),1);
 
-if size(leftPts,1) > 1
-    possibleLeft = [leftPts(1:2,:)];
-else 
-    possibleLeft =leftPts;
-end
+
+possibleLeft = [leftPts(1:2,:)];
+
 [~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
 
 leftAL =  possibleLeft(indLeftFinal,:);
 
 %
-if size(rightPts,1) > 1
+
 possibleRight = rightPts(end:-1:end-1,:);
-else
-    possibleRight = rightPts;
-end
 
 [~,indRightFinal] = min(abs((possibleRight(:,2)- prn_coordinates(2))));
 

@@ -1,0 +1,9 @@
+%calculate_2D_error
+
+
+x_mean = mean(data(:,2))
+x_std = std(data(:,2))
+y_mean = mean(data(:,3))
+y_std = std(data(:,3))
+rad_2d_mean=mean(data(:,4))
+rad_2d_std = std(data(:,4))

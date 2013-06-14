@@ -42,15 +42,20 @@ end
 
 
 %% Find start and end point coordinates
-[startPt] = vsg('FWP',imageLimbEnds.*255);
-startPt(1) = startPt(1)+1;
-startPt(2) = startPt(2)+1;
+[p1] = vsg('FWP',imageLimbEnds.*255);
+p1(1) = p1(1)+1;
+p1(2) = p1(2)+1;
 temp = imageLimbEnds.*255;
-temp(startPt(2),startPt(1)) = 0;
-[endPt] =  vsg('FWP',temp);
-endPt(1) = endPt(1)+1;
-endPt(2) = endPt(2)+1;
+temp(p1(2),p1(1)) = 0;
+[p2] =  vsg('FWP',temp);
+p2(1) = p2(1)+1;
+p2(2) = p2(2)+1;
 
+pts = [p1;p2];
+pts_sorted= sortrows(pts,1);
+
+startPt = pts_sorted(1,:);
+endPt = pts_sorted(2,:);
 %% Start at startPoint and move along point to end point
 currentPt = startPt;
 previousPt = 0;

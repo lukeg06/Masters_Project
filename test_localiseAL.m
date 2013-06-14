@@ -33,7 +33,8 @@ for i = 1:noImages
 
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [ALLocation] = localiseAL2(imageIn,prnLocation,'false');
+    [ALLocation] = localiseAL2(imageIn,prnLocation,5,'true');
+ 
     if ALLocation == 0
          fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
          fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
@@ -54,8 +55,11 @@ for i = 1:noImages
    fprintf(test_localiseALRightResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
 
     fprintf('%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
+plotLandmark([landmarkLocations(12,:,ind);landmarkLocations(11,:,ind)],gcf)
+      pause;
+      close(gcf)
 
-   
+    
 end
 
 fclose(alLocationFileID);
