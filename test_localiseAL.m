@@ -29,16 +29,16 @@ test_localiseALLeftResultsFileID = fopen('C:\Documents and Settings\Luke\My Docu
 fprintf(test_localiseALRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 fprintf(test_localiseALLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
-for i = 814
+for i =245
     
     
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[50 42],26,'false');
+    [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[50 42],20,'true');
     
     if ALLocation == 0
         
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],26,'false');
+        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],20,'false');
     end
     
     if ALLocation == 0
@@ -51,7 +51,7 @@ for i = 814
     
     if isempty(ALLocation)
         
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],26,'false');
+        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],20,'false');
     end
     
     if isempty(ALLocation)
@@ -62,7 +62,7 @@ for i = 814
     end
     
     if size(ALLocation,1) ~= 2
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],20,'false');
     end
     
     if size(ALLocation,1) ~= 2
@@ -88,7 +88,7 @@ for i = 814
 %     plotLandmark([landmarkLocations(12,:,ind);landmarkLocations(11,:,ind)],gcf)
 %     pause;
 %     close(gcf)
-%     
+    
     
 end
 

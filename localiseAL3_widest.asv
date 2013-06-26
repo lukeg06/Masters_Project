@@ -1,21 +1,27 @@
 % Localise AL2
-function [ALLocation] = localiseAL3_widest(imageIn,PRNLocation,sigma,displayImage)
+function [ALLocation] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage)
 
 addpath('./toolboxes/chaincode/')
 
 imageEdge = edge(imageIn,'log',0,7);
 
+
 %%
 %Define search region around  prn.
+windowSize = windowSizeTotal./2;
 imageMasked = zeros(size(imageIn));
 prn_coordinates = round(mm2pixel(PRNLocation)); % round before to keep matlab happy
-imageMasked((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),...
-    (prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32))) ...
-    = imageEdge((prn_coordinates(2) - round(21/0.32)):(prn_coordinates(2) + round(21/0.32)),...
-    (prn_coordinates(1) - round(25/0.32)):(prn_coordinates(1) + round(25/0.32)));
+imageMasked((prn_coordinates(2) - round(windowSize(2)/0.32)):(prn_coordinates(2) + round(windowSize(2)/0.32)),...
+    (prn_coordinates(1) - round(windowSize(1)/0.32)):(prn_coordinates(1) + round(windowSize(1)/0.32))) ...
+    = imageEdge((prn_coordinates(2) - round(windowSize(2)/0.32)):(prn_coordinates(2) + round(windowSize(2)/0.32)),...
+    (prn_coordinates(1) - round(windowSize(1)/0.32)):(prn_coordinates(1) + round(windowSize(1)/0.32)));
 
 %
 %% Find the edges of the nose by moving out horizontally from the icp estimage
+
+%Remove Junctions
+ a = vsg('Junctions',imageMasked.*255);
+ imageMasked = xor(a,imageMasked);
 
 % Label edges
 image_labelled = bwlabeln(imageMasked,8);
@@ -29,8 +35,11 @@ if isempty(label_value)
 end
 % isoloate nose edge. 
 imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
-
+% check to make sure we don't have a closed contour
+limbEnd
 noseContour = contour2xy2(imageNoseEdge);
+
+
 if noseContour == 0;
     ALLocation = 0;
     return;
@@ -47,7 +56,8 @@ dog = conv(chainCode.ucode,g_norm,'same');
 
 
 
-[val ind] = findpeaks(dog,'minpeakheight',0.05);
+%[val ind] = findpeaks(dog,'minpeakheight',0.05);
+[val ind] = findpeaks(dog);
 criticalPoints = zeros(size(ind,2),2);
 y = 1;
 for k = 1:size(ind,2)
@@ -69,7 +79,7 @@ rightPts = sortrows(criticalPoints(rightInds,:),2);
 leftPts = sortrows(criticalPoints(leftInds,:),2);
 
 if size(leftPts,1) > 1
-    possibleLeft = [leftPts(1:2,:)];
+    possibleLeft = [leftPts(:,:)];
 else 
     possibleLeft =leftPts;
 end
@@ -80,7 +90,7 @@ leftAL = possibleLeft(ind_l,:);
 
 %
 if size(rightPts,1) > 1
-possibleRight = rightPts(end:-1:end-1,:);
+possibleRight = rightPts(:,:);
 else
     possibleRight = rightPts;
 end

@@ -20,8 +20,8 @@ imageMasked((prn_coordinates(2) - round(windowSize(2)/0.32)):(prn_coordinates(2)
 %% Find the edges of the nose by moving out horizontally from the icp estimage
 
 %Remove Junctions
- a = vsg('Junctions',imageMasked.*255);
- imageMasked = xor(a,imageMasked);
+a = vsg('Junctions',imageMasked.*255);
+imageMasked = xor(a,imageMasked);
 
 % Label edges
 image_labelled = bwlabeln(imageMasked,8);
@@ -33,10 +33,30 @@ if isempty(label_value)
     ind = find(image_labelled(prn_coordinates(2),prn_coordinates(1):-1:1)>0,1,'first');
     label_value = image_labelled(prn_coordinates(2),prn_coordinates(1)-(ind-1));
 end
-% isoloate nose edge. 
+% isoloate nose edge.
 imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
-
+% check to make sure we don't have a closed contour
+limbEnds = vsg('LimbEnds',imageNoseEdge.*255)./255;
+if sum(limbEnds(:)) ==0
+    
+    imageMasked = xor(imageMasked,imageNoseEdge);
+    image_labelled = bwlabeln(imageMasked,8);
+    % From the prn_coordinate look for the the first edge in to the right
+    ind = find(image_labelled(prn_coordinates(2),prn_coordinates(1):end)>0,1,'first');
+    label_value = image_labelled(prn_coordinates(2),prn_coordinates(1)+(ind-1));
+    
+    if isempty(label_value)
+        ind = find(image_labelled(prn_coordinates(2),prn_coordinates(1):-1:1)>0,1,'first');
+        label_value = image_labelled(prn_coordinates(2),prn_coordinates(1)-(ind-1));
+    end
+    % isoloate nose edge.
+    imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
+    % check to make sure we don't have a closed contour
+    limbEnds = vsg('LimbEnds',imageNoseEdge.*255)./255;
+end
 noseContour = contour2xy2(imageNoseEdge);
+
+
 if noseContour == 0;
     ALLocation = 0;
     return;
@@ -68,7 +88,7 @@ end
 % Locate leftmost and rightmost critical points which are closest to the
 % PRN along the vertical direction. Go left and right 1st up and down
 
-% 
+%
 rightInds = find(criticalPoints(:,1)>prn_coordinates(1));
 leftInds = find(criticalPoints(:,1)<prn_coordinates(1));
 
@@ -77,17 +97,17 @@ leftPts = sortrows(criticalPoints(leftInds,:),2);
 
 if size(leftPts,1) > 1
     possibleLeft = [leftPts(:,:)];
-else 
+else
     possibleLeft =leftPts;
 end
- %[~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
+%[~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
 
 [~,ind_l] = min(possibleLeft(:,1));
 leftAL = possibleLeft(ind_l,:);
 
 %
 if size(rightPts,1) > 1
-possibleRight = rightPts(:,:);
+    possibleRight = rightPts(:,:);
 else
     possibleRight = rightPts;
 end
@@ -99,7 +119,7 @@ rightAL = possibleRight(ind_r,:);
 ALLocation =  [pixel2mm(leftAL);pixel2mm(rightAL)];
 
 
-% Display 
+% Display
 if strcmp(displayImage,'true')
     figure,
     subplot(2,2,1),imagesc(imageIn),title('Input Image');
@@ -107,15 +127,15 @@ if strcmp(displayImage,'true')
     subplot(2,2,3),imshow(imageNoseEdge);
     hold on;
     for i = 1:size(ind,2)
-       plot(noseContour(ind,2),noseContour(ind,1),'*y'); 
+        plot(noseContour(ind,2),noseContour(ind,1),'*y');
     end
     plotLandmark(PRNLocation,gcf)
     hold off;title('Critical Points')
-   
+    
     subplot(2,2,4),imshow(imageIn),title('AL Locations');
-    hold on; 
-    plot(mm2pixel(ALLocation(1,1)),mm2pixel(ALLocation(1,2)),'*m'); 
-     plot(mm2pixel(ALLocation(2,1)),mm2pixel(ALLocation(2,2)),'*m'); 
+    hold on;
+    plot(mm2pixel(ALLocation(1,1)),mm2pixel(ALLocation(1,2)),'*m');
+    plot(mm2pixel(ALLocation(2,1)),mm2pixel(ALLocation(2,2)),'*m');
     hold off;
     
 end
