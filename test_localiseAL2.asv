@@ -34,22 +34,22 @@ fprintf(alsigmaFileID,'sigma\tx_el_std\tx_er_std\ty_el_std\ty_er_std\trad_el_std
 
 
 for sigma = 1:20
-for i = 1:100
+for i = 1:20
  
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-     [ALLocation] = localiseAL2(imageIn,prnLocation,sigma,'false');
+     [ALLocation] = localiseAL3_widest;
  
-    if ALLocation == 0
-         fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
-         fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
-           fprintf('%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
-           continue;
-    end
+%     if ALLocation == 0
+%          fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+%          fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+%            fprintf('%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
+%            continue;
+%     end
     
    ind = strmatch(imageList{i},dbList);
    
-   fi
+   if size(ALLocation,1) == 2
   %Calute error & print to file
    x_error_left(i) = abs(ALLocation(1,1) - landmarkLocations(11,1,ind));
    y_error_left(i) = abs(ALLocation(1,2) - landmarkLocations(11,2,ind));
@@ -62,8 +62,9 @@ for i = 1:100
    %fprintf(test_localiseALRightResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
 
     %fprintf('%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
-
-   
+   else 
+       continue
+   end
 end
 x_el_std = std(x_error_left);
 x_er_std = std(x_error_right);

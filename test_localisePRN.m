@@ -26,7 +26,7 @@ estimatedLocation = landmarkLocations(19,:,996);
 
 for i = 1:noImages
  imageIn = im2double(imread(strcat(DBpath,imageList{i})));
- [PRNLocation] = localisePRN(imageIn,estimatedLocation,14,'false');
+ [PRNLocation] = localisePRN(imageIn,estimatedLocation,17,'false');
  
   %Write PRNLocation to file
   fprintf(prnLocationFileID,'%d\t%f\t%f\n',i,PRNLocation(1),PRNLocation(2));
@@ -40,6 +40,7 @@ for i = 1:noImages
    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
    %fprintf('%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);
    %fprintf('Processing image %d\n',i)
+   %plotLandmark(landmarkLocations(19,:,ind),gcf)
 end
 
 

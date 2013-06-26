@@ -18,6 +18,7 @@ b270 = imerode(double(contourImage),rot90(a,3));
 b = b0|b90|b180|b270;
 c = and(imageLimbEnds,b);
 
+
 imageLimbEnds = xor(c,imageLimbEnds);
 
 %%
@@ -30,9 +31,21 @@ e270 = imerode(double(contourImage),rot90(d,3));
 
 e = e0|e90|e180|e270;
 contourImage = xor(e,contourImage);
+
+%Previous step may in a very small number of cases produce a new branch.
+[imageLimbEnds2] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
+noNewLimbEnds = sum(imageLimbEnds2(:))
+for i = 1:
+   
+[p_a] = vsg('FWP',imageLimbEnds2.*255);
+
+points_a(1,i) = p_a(1)+1;
+points_a(2,i) = p_a(2)+1;
+imageLimbEnds2(points_a(2,i),points_a(1,i)) = 0;
+
+end
+
 % Check to see that contour is valid
-
-
 if(sum(imageLimbEnds(:)) ~= 2)
     
     coordinates_out = 0;
@@ -53,8 +66,8 @@ p2(2) = p2(2)+1;
 pts = [p1,p2];
 pts_sorted= sortrows(pts',1)';
 
-startPt = pts_sorted(1,end:-1:1);
-endPt = pts_sorted(2,end:-1:1);
+startPt = pts_sorted(:,2);
+endPt = pts_sorted(:,1);
 
 currentPt = startPt;
 contourImage(currentPt(2),currentPt(1)) = 0;
@@ -89,8 +102,16 @@ while ~isequal(currentPt,endPt)
         k = k+1;
         contourImage(testPt(2),testPt(1)) = 0;
          found = 0;
-         
+        
+    
     else
+        for i = 1:sum(imageLimbEnds2(:))
+            if isequal(points_a(:,i),currentPt)
+                coordinates(k,:)= currentPt';
+                break;
+            end
+        end
+        error('Luke');
         coordinates_out = 0;
         return;
     end

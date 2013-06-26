@@ -18,6 +18,7 @@ b270 = imerode(double(contourImage),rot90(a,3));
 b = b0|b90|b180|b270;
 c = and(imageLimbEnds,b);
 
+
 imageLimbEnds = xor(c,imageLimbEnds);
 
 %%
@@ -30,13 +31,25 @@ e270 = imerode(double(contourImage),rot90(d,3));
 
 e = e0|e90|e180|e270;
 contourImage = xor(e,contourImage);
+
+%Previous step may in a very small number of cases produce a new branch.
+[imageLimbEnds2] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
+noNewLimbEnds = sum(imageLimbEnds2(:));
+for i = 1:noNewLimbEnds
+    
+    [p_a] = vsg('FWP',imageLimbEnds2.*255);
+    
+    points_a(1,i) = p_a(1)+1;
+    points_a(2,i) = p_a(2)+1;
+    imageLimbEnds2(points_a(2,i),points_a(1,i)) = 0;
+    
+end
+
 % Check to see that contour is valid
-
-
 if(sum(imageLimbEnds(:)) ~= 2)
     
     coordinates_out = 0;
-        return;
+    return;
 end
 
 %% Find start and end point coordinates
@@ -68,16 +81,16 @@ while ~isequal(currentPt,endPt)
     for j = -1:1
         for i = -1:1
             testPt = [currentPt(1)+i;currentPt(2)+j];
-           
-                 if (contourImage(testPt(2),testPt(1)) == 1)
-                                nextPt = testPt;
-                                found = 1;
-                                break;
-                 end
-           
+            
+            if (contourImage(testPt(2),testPt(1)) == 1)
+                nextPt = testPt;
+                found = 1;
+                break;
+            end
+            
         end
-         if found == 1
-           
+        if found == 1
+            
             break;
         end
         
@@ -88,11 +101,24 @@ while ~isequal(currentPt,endPt)
         coordinates(k,:)= nextPt';
         k = k+1;
         contourImage(testPt(2),testPt(1)) = 0;
-         found = 0;
-         
+        found = 0;
+        
+        
     else
-        coordinates_out = 0;
-        return;
+        for i = 1:noNewLimbEnds
+            if isequal(points_a(:,i),currentPt)
+                coordinates(k,:)= currentPt';
+                found2 = 1;
+                break;
+            end
+        end
+        if found2 == 1
+            break;
+        else
+            error('Luke');
+            coordinates_out = 0;
+            return;
+        end
     end
 end
 

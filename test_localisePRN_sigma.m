@@ -21,9 +21,9 @@ estimatedLocation = landmarkLocations(19,:,996);
 randomSample = randperm(1149);
 for sigma = 1:20
     y=1;
-    for i = (1:100)
+    for i = 7
      imageIn = im2double(imread(strcat(DBpath,imageList{i})));
-     [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,'false');
+     [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,'true');
         
       ind = strmatch(imageList{i},dbList);
       %Calute error & print to file
@@ -31,6 +31,8 @@ for sigma = 1:20
        x_error(y) = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
        euclidean_error(y) = norm(PRNLocation - landmarkLocations(19,:,ind));
         y= y+1;
+        plotLandmark(landmarkLocations(19,:,ind),gcf);
+        pause
     end
     std_x = std(x_error);
     std_y = std(y_error);
@@ -38,6 +40,8 @@ for sigma = 1:20
     mean_x = mean(x_error);
     mean_y = mean(y_error);
     mean_rad = mean(euclidean_error);
+ fprintf('%d\t%f\t%f\t%f\t%f\t%f\t%f\n',sigma,std_x,std_y,std_rad,mean_x,mean_y,mean_rad);
+
     fprintf(test_localisePRN_sigmaResultsFileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\n',sigma,std_x,std_y,std_rad,mean_x,mean_y,mean_rad);
 end
 

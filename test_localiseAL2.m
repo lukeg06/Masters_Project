@@ -30,15 +30,16 @@ noImages = size(imageList,1);
 % fprintf(test_localiseALLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
 alsigmaFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\AL_Sigma.txt','w');
-fprintf(alsigmaFileID,'sigma\tx_el_std\tx_er_std\ty_el_std\ty_er_std\trad_el_std\trad_er_std\n');
+fprintf(alsigmaFileID,'sigma\tx_el_std\tx_er_std\ty_el_std\ty_er_std\trad_el_std\trad_er_std\tErrors\n');
 
 
-for sigma = 1:20
-for i = 1:100
+for sigma = 10:30
+    errors = 0;
+for i = 800:1000
  
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-     [ALLocation] = localiseAL2(imageIn,prnLocation,sigma,'false');
+     [ALLocation] =localiseAL3_widest(imageIn,prnLocation,[50 42],sigma,'false');
  
 %     if ALLocation == 0
 %          fprintf(test_localiseALRightResultsFileID,'%d\t1234\t1234\t1234\n',i,x_error_right,y_error_right,rad_error_right);
@@ -63,6 +64,7 @@ for i = 1:100
 
     %fprintf('%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
    else 
+       errors = errors+1;
        continue
    end
 end
@@ -75,11 +77,12 @@ y_er_std = std(y_error_right);
 rad_el_std = std(rad_error_left);
 rad_er_std = std(rad_error_right);
 
-fprintf(alsigmaFileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\n',sigma,x_el_std,x_er_std,y_el_std,y_er_std,rad_el_std,rad_er_std);
+
+fprintf(alsigmaFileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\t%d\n',sigma,x_el_std,x_er_std,y_el_std,y_er_std,rad_el_std,rad_er_std,errors);
 end
 
 fclose(alsigmaFileID);
 
-% copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseALRightResults.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localiseAL_right.txt')
+copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\AL_Sigma.txt','C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\AL_Sigma.txt')
 % copyfile('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseALLeftResults.txt'
 % ,'C:\Documents and Settings\Luke\My Documents\Dropbox\Project results\test_localiseAL_left.txt')
