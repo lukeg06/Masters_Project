@@ -34,11 +34,14 @@ for i = 1:noImages
     
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[50 42],28,'false');
+    [Output] =localiseAL3_widest(imageIn,prnLocation,[50 42],30,'false');
+    ALLocation = Output.ALLocation;
+    
     
     if ALLocation == 0
         
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+        [Output] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+         ALLocation = Output.ALLocation;
     end
     
     if ALLocation == 0
@@ -51,7 +54,8 @@ for i = 1:noImages
     
     if isempty(ALLocation)
         
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+        [Output] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+         ALLocation = Output.ALLocation;
     end
     
     if isempty(ALLocation)
@@ -61,16 +65,40 @@ for i = 1:noImages
         continue;
     end
     
+    % Try expanding search region. 5mm each side.
     if size(ALLocation,1) ~= 2
-        [ALLocation] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+        [Output] = localiseAL3_widest(imageIn,prnLocation,[60 42],30,'false');
+         ALLocation = Output.ALLocation;
     end
     
+    % If expanding didn't work then try looking searching for other
+    % contour.
+    
     if size(ALLocation,1) ~= 2
-        fprintf(test_localiseALRightResultsFileID,'%d\n',i);
-        fprintf(test_localiseALLeftResultsFileID,'%d\n',i);
-        fprintf('Error in image %d \n',i);
-        continue;
+        
+        if isequal(Output.error,[0,1])
+            leftAL = ALLocation;
+            %left point detected. Get the right.
+            [Output] = localiseAL3_widest(imageIn,prnLocation,[50 42],30,'false','right');
+             rightAL = Output.ALLocation;
+             ALLocation = [leftAL;rightAL];
+        elseif isequal(Output.error,[1,0])
+            rightAl = ALLocation;
+            %right detected. Get left.
+            [Output] = localiseAL3_widest(imageIn,prnLocation,[50 42],30,'false','left');
+             leftAL = Output.ALLocation;
+             ALLocation = [leftAL;rightAL];
+        else
+            fprintf(test_localiseALRightResultsFileID,'%d\n',i);
+            fprintf(test_localiseALLeftResultsFileID,'%d\n',i);
+            fprintf('Error in image %d \n',i);
+            continue;
+        end
     end
+    
+    
+    
+    
     
     ind = strmatch(imageList{i},dbList);
     %Calute error & print to file
@@ -85,9 +113,9 @@ for i = 1:noImages
     fprintf(test_localiseALRightResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error_right,y_error_right,rad_error_right);
     
     fprintf('%d\t%f\t%f\t%f\n',i,x_error_left,y_error_left,rad_error_left);
-    plotLandmark([landmarkLocations(12,:,ind);landmarkLocations(11,:,ind)],gcf)
-    pause;
-    close(gcf)
+%     plotLandmark([landmarkLocations(12,:,ind);landmarkLocations(11,:,ind)],gcf)
+%     pause;
+%     close(gcf)
     
     
 end

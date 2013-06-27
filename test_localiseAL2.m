@@ -30,12 +30,12 @@ noImages = size(imageList,1);
 % fprintf(test_localiseALLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
 alsigmaFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\AL_Sigma.txt','w');
-fprintf(alsigmaFileID,'sigma\tx_el_std\tx_er_std\ty_el_std\ty_er_std\trad_el_std\trad_er_std\tErrors\n');
+fprintf(alsigmaFileID,'sigma\tx_el_std\tx_er_std\ty_el_std\ty_er_std\trad_el_std\trad_er_std\tx_el_mean\tx_er_mean\ty_el_mean\ty_er_mean\trad_el_mean\trad_er_mean\tErrors\n');
 
 
-for sigma = 10:30
+for sigma = 20:30
     errors = 0;
-for i = 800:1000
+for i = 1:200
  
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
@@ -77,8 +77,16 @@ y_er_std = std(y_error_right);
 rad_el_std = std(rad_error_left);
 rad_er_std = std(rad_error_right);
 
+x_el_mean = mean(x_error_left);
+x_er_mean = mean(x_error_right);
 
-fprintf(alsigmaFileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\t%d\n',sigma,x_el_std,x_er_std,y_el_std,y_er_std,rad_el_std,rad_er_std,errors);
+y_el_mean = mean(y_error_left);
+y_er_mean = mean(y_error_right);
+
+rad_el_mean = mean(rad_error_left);
+rad_er_mean = mean(rad_error_right);
+
+fprintf(alsigmaFileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\n',sigma,x_el_std,x_er_std,y_el_std,y_er_std,rad_el_std,rad_er_std,x_el_mean,x_er_mean,y_el_mean,y_er_mean,rad_el_mean,rad_er_mean,errors);
 end
 
 fclose(alsigmaFileID);

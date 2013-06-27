@@ -41,9 +41,9 @@ if isempty(label_value)
     if isequal(direction,'right')
         direction = 'left';
     elseif isequal(direction,'left')
-        direction = 'right';
+          direction = 'right';
     end
-    label_value = searchForContour(direction);
+    label_value = searchForContour(direction);  
 end
 
 
@@ -58,20 +58,20 @@ if sum(limbEnds(:)) ==0
     
     imageMasked = xor(imageMasked,imageNoseEdge);
     image_labelled = bwlabeln(imageMasked,8);
-    
+
     label_value = searchForContour(direction);
-    
-    % If for some reason didn't find contour in the initial direction then
-    % search for it the other way.
-    if isempty(label_value)
-        if isequal(direction,'right')
-            direction = 'left';
-        elseif isequal(direction,'left')
-            direction = 'right';
-        end
-        label_value = searchForContour(direction);
+
+% If for some reason didn't find contour in the initial direction then
+% search for it the other way.
+if isempty(label_value)
+    if isequal(direction,'right')
+        direction = 'left';
+    elseif isequal(direction,'left')
+          direction = 'right';
     end
-    
+    label_value = searchForContour(direction);  
+end
+
     % isoloate nose edge.
     imageNoseEdge = bsxfun(@eq,image_labelled,(ones(size(imageIn)).*label_value));
 end
@@ -96,8 +96,8 @@ dog = conv(chainCode.ucode,g_norm,'same');
 
 
 
-[val ind] = findpeaks(dog,'minpeakheight',0);
-%[val ind] = findpeaks(dog);
+%[val ind] = findpeaks(dog,'minpeakheight',0.05);
+[val ind] = findpeaks(dog);
 criticalPoints = zeros(size(ind,2),2);
 y = 1;
 for k = 1:size(ind,2)
@@ -123,24 +123,10 @@ if size(leftPts,1) > 1
 else
     possibleLeft =leftPts;
 end
-[~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
-[~,ind_l] = min(possibleLeft(:,1));
+%[~,indLeftFinal] = min(abs((possibleLeft(:,2)- prn_coordinates(2))));
 
-if isequal(indLeftFinal,ind_l)
+[~,ind_l] = min(possibleLeft(:,1));
 leftAL = possibleLeft(ind_l,:);
-else
-    testPL = possibleLeft(2,:);
-    
-    if abs(testPL(1) - prn_coordinates(1))< abs(possibleLeft(ind_l,1) - prn_coordinates(1))...
-            && abs(testPL(2) - prn_coordinates(2))< abs(possibleLeft(ind_l,2) - prn_coordinates(2))
-        leftAL = testPL;
-        
-    else
-        leftAL = possibleLeft(ind_l,:);
-    end
-   
-    
-end
 
 %
 if size(rightPts,1) > 1
@@ -149,29 +135,15 @@ else
     possibleRight = rightPts;
 end
 
-[~,indRightFinal] = min(abs((possibleRight(:,2)- prn_coordinates(2))));
-
+%[~,indRightFinal] = min(abs((possibleRight(:,2)- prn_coordinates(2))));
 [~,ind_r] = max(possibleRight(:,1));
-
-if isequal(indRightFinal,ind_r)
 rightAL = possibleRight(ind_r,:);
-else
-    testPR = possibleRight(2,:);
-    
-    if abs(testPR(1) - prn_coordinates(1))< abs(possibleRight(ind_r,1) - prn_coordinates(1))...
-            && abs(testPR(2) - prn_coordinates(2))< abs(possibleRight(ind_r,2) - prn_coordinates(2))
-        rightAL = testPR;
-        
-    else
-        rightAL = possibleRight(ind_r,:);
-    end
-   
-    
-end
 
 % Check to see if either of the two points hasn't been detected. If not
 % check to see if getting the other contour will fix the issue. Left in
 % most cases. Set an error flag.
+
+
 
 %Check left not detected
 if isempty(leftAL)
@@ -208,8 +180,8 @@ if strcmp(displayImage,'true')
     
     subplot(2,2,4),imshow(imageIn),title('AL Locations');
     hold on;
-    plot(mm2pixel(Output.ALLocation(1,1)),mm2pixel(Output.ALLocation(1,2)),'*m');
-    plot(mm2pixel(Output.ALLocation(2,1)),mm2pixel(Output.ALLocation(2,2)),'*m');
+    plot(mm2pixel(ALLocation(1,1)),mm2pixel(ALLocation(1,2)),'*m');
+    plot(mm2pixel(ALLocation(2,1)),mm2pixel(ALLocation(2,2)),'*m');
     hold off;
     
 end

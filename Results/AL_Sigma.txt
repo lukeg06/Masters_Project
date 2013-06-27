@@ -1,1 +1,1 @@
-sigma	x_el_std	x_er_std	y_el_std	y_er_std	rad_el_std	rad_er_std	Errors
+sigma	x_el_std	x_er_std	y_el_std	y_er_std	rad_el_std	rad_er_std	x_el_mean	x_er_mean	y_el_mean	y_er_mean	rad_el_mean	rad_er_mean	Errors
