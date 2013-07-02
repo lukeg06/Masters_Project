@@ -1,5 +1,22 @@
 function [coordinates_out] = contour2xy2(contourImage,reverse)
 
+% This function funtion takes an image with a single contour in the image
+% as the input and return the coordinates of each pixel in the contour. The
+% algrothim follows the pixels from the start point to the end point of the
+% contour. The start point is taken as the point nearest the top left of
+% the image.
+%
+%[coordinates_out] = contour2xy2(contourImage,reverse)
+%
+%Inputs,
+%       contourImage: Binary input image. Must contain only a single contour two limb ends. 
+%
+%       reverse = Should the contour be traversed in reverse order ['true'/'false'] 
+%Outputs,
+%       coordinates_out =  x and y coordinate (in pixel value) of the contour.
+%       In the form [y(:),x(:)].
+%
+
 if exist('reverse','var')
     if ~or(strcmp(reverse,'true'),strcmp(reverse,'false'))
         reverse = 'false';
@@ -7,7 +24,8 @@ if exist('reverse','var')
 else
     reverse = 'false';
 end
-contourImagecp= contourImage;
+%contourImagecp= contourImage;
+
 [imageLimbEnds] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
 
 % Seach for [0 0 0

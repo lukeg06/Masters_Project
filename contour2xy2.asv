@@ -1,5 +1,35 @@
-function [coordinates_out] = contour2xy2(contourImage)
+function [coordinates_out] = contour2xy2(contourImage,reverse)
 
+% This function funtion takes an image with a single contour in the image
+% as the input and return the coordinates of each pixel in the contour. The
+% algrothim follows the pixels from the start point to the end point of the
+% contour. The start point is taken as the point nearest the top left of
+% the image.
+%
+%[coordinates_out] = contour2xy2(contourImage,reverse)
+%
+%Inputs,
+%       contourImage: Binary input image. Must contain only a single contour two limb ends. 
+%
+%      reverse = Should the contour be traversed in reverse order ['true'/'false'] 
+%Outputs,
+%       Output: Returns an output object.
+%
+%       Output.ALLocation: Coordinates of left and right alares in mm. Size
+%       = [2,2]. [Left AL;Right AL]
+%
+%       Output.errors: Indicates wheter there has been an error in the
+%       detection of one of the points. [0 0] = no error. [0 1] = right
+%       error. [1 0] = left error.
+%
+
+if exist('reverse','var')
+    if ~or(strcmp(reverse,'true'),strcmp(reverse,'false'))
+        reverse = 'false';
+    end
+else
+    reverse = 'false';
+end
 contourImagecp= contourImage;
 [imageLimbEnds] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
 
@@ -34,22 +64,22 @@ contourImage = xor(e,contourImage);
 
 %Previous step may in a very small number of cases produce a new branch.
 [imageLimbEnds2] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
-noNewLimbEnds = sum(imageLimbEnds2(:))
-for i = 1:
-   
-[p_a] = vsg('FWP',imageLimbEnds2.*255);
-
-points_a(1,i) = p_a(1)+1;
-points_a(2,i) = p_a(2)+1;
-imageLimbEnds2(points_a(2,i),points_a(1,i)) = 0;
-
+noNewLimbEnds = sum(imageLimbEnds2(:));
+for i = 1:noNewLimbEnds
+    
+    [p_a] = vsg('FWP',imageLimbEnds2.*255);
+    
+    points_a(1,i) = p_a(1)+1;
+    points_a(2,i) = p_a(2)+1;
+    imageLimbEnds2(points_a(2,i),points_a(1,i)) = 0;
+    
 end
 
 % Check to see that contour is valid
 if(sum(imageLimbEnds(:)) ~= 2)
     
     coordinates_out = 0;
-        return;
+    return;
 end
 
 %% Find start and end point coordinates
@@ -81,16 +111,16 @@ while ~isequal(currentPt,endPt)
     for j = -1:1
         for i = -1:1
             testPt = [currentPt(1)+i;currentPt(2)+j];
-           
-                 if (contourImage(testPt(2),testPt(1)) == 1)
-                                nextPt = testPt;
-                                found = 1;
-                                break;
-                 end
-           
+            
+            if (contourImage(testPt(2),testPt(1)) == 1)
+                nextPt = testPt;
+                found = 1;
+                break;
+            end
+            
         end
-         if found == 1
-           
+        if found == 1
+            
             break;
         end
         
@@ -101,26 +131,37 @@ while ~isequal(currentPt,endPt)
         coordinates(k,:)= nextPt';
         k = k+1;
         contourImage(testPt(2),testPt(1)) = 0;
-         found = 0;
+        found = 0;
         
-    
+        
     else
-        for i = 1:sum(imageLimbEnds2(:))
+        for i = 1:noNewLimbEnds
             if isequal(points_a(:,i),currentPt)
                 coordinates(k,:)= currentPt';
+                found2 = 1;
                 break;
             end
         end
-        error('Luke');
-        coordinates_out = 0;
-        return;
+        if found2 == 1
+            break;
+        else
+            error('Luke');
+            coordinates_out = 0;
+            return;
+        end
     end
 end
 
 
 %Swap x and y and reverse order
-%coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
-coordinates_out = [coordinates(:,2),coordinates(:,1)];
+
+if strcmp(reverse,'true')
+    coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
+else
+    
+    coordinates_out = [coordinates(:,2),coordinates(:,1)];
+end
+
 
 
 

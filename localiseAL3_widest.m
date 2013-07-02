@@ -1,5 +1,39 @@
-% Localise AL2
+
 function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction,reverse)
+% This function is used to detect the precise location of the left and
+% right Alares. It uses a LOG edge detector to isolate the nose contour.
+% This contour is then examined in order to detect points of high positive
+% curvature.
+%
+%[Output] =
+%localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction,reverse)
+%
+%Inputs,
+%       imageIn: The range image of the subject in question. 
+%
+%       PRNLocation: Location of the Pronasale as detected previously (in mm).
+%       
+%       windowSizeTotal: Size of search region used. The is centered around
+%       the PRN. size = [1,2] in mm.
+%       
+%       sigma: smoothing value used for the detetection of points of high
+%       curvature.
+%       
+%       displayImage: Display results of detection.
+%       
+%       direction: Wheter to search to the right or left first. ['right'/'left']
+%
+%       reverse: Travers the contour in reverse direction. ['true'/'false'] 
+%Outputs,
+%       Output: Returns an output object.
+%
+%       Output.ALLocation: Coordinates of left and right alares in mm. Size
+%       = [2,2]. [Left AL;Right AL]
+%
+%       Output.errors: Indicates wheter there has been an error in the
+%       detection of one of the points. [0 0] = no error. [0 1] = right
+%       error. [1 0] = left error.
+%
 
 addpath('./toolboxes/chaincode/')
 

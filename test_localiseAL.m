@@ -30,7 +30,7 @@ test_localiseALLeftResultsFileID = fopen('C:\Documents and Settings\Luke\My Docu
 fprintf(test_localiseALRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 fprintf(test_localiseALLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
-for i = 724
+for i = i:noImages
    
     
     error = 0;
