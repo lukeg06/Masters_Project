@@ -1,5 +1,5 @@
 % Localise AL2
-function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction)
+function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction,reverse)
 
 addpath('./toolboxes/chaincode/')
 
@@ -12,7 +12,9 @@ if ~exist('direction','var')
     direction = 'right';
 end
 
-
+if ~exist('reverse','var')
+    reverse = 'false';
+end
 %Define search region around  prn.
 windowSize = windowSizeTotal./2;
 imageMasked = zeros(size(imageIn));
@@ -77,11 +79,12 @@ if sum(limbEnds(:)) ==0
 end
 
 % Traverse noseContour
-noseContour = contour2xy2(imageNoseEdge);
+noseContour = contour2xy2(imageNoseEdge,reverse);
 
 
 if noseContour == 0;
     Output.ALLocation = 0;
+    Output.errors = [1,1];
     return;
 end
 chainCode = chaincode([noseContour(:,1) noseContour(:,2)],'true');

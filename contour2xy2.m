@@ -1,5 +1,12 @@
-function [coordinates_out] = contour2xy2(contourImage)
+function [coordinates_out] = contour2xy2(contourImage,reverse)
 
+if exist('reverse','var')
+    if ~or(strcmp(reverse,'true'),strcmp(reverse,'false'))
+        reverse = 'false';
+    end
+else
+    reverse = 'false';
+end
 contourImagecp= contourImage;
 [imageLimbEnds] = (vsg('LimbEnds',uint8(contourImage)*255))./255;
 
@@ -124,8 +131,14 @@ end
 
 
 %Swap x and y and reverse order
-%coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
-coordinates_out = [coordinates(:,2),coordinates(:,1)];
+
+if strcmp(reverse,'true')
+    coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
+else
+    
+    coordinates_out = [coordinates(:,2),coordinates(:,1)];
+end
+
 
 
 

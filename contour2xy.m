@@ -1,4 +1,4 @@
-function [coordinates_out] = contour2xy(contourImage)
+function [coordinates_out] = contour2xy(contourImage,reverse)
 
 % [imageList,noImages]= getDBInfo(DBpath,imageType)
 %
@@ -18,6 +18,14 @@ function [coordinates_out] = contour2xy(contourImage)
 %            0 1 0
 %            1 0 1]
 % and rotational varients which could lead to false detection of limb ends.
+
+if exist('reverse','var')
+    if ~or(strcmp(reverse,'true'),strcmp(reverse,'false'))
+        reverse = 'false';
+    end
+else
+    reverse = 'false';
+end
 
 a = [0 0 0;0 1 0;1 0 1];
 b0 = imerode(double(contourImage),a);
@@ -95,6 +103,10 @@ while ~isequal(currentPt,endPt)
     k = k+1;
 end
 
+
 %Swap x and y and reverse order
-%coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
+if strcmp(reverse,'true')
+coordinates_out = [coordinates(end-1:-1:1,2),coordinates(end-1:-1:1,1)];
+else
 coordinates_out = [coordinates(:,2),coordinates(:,1)];
+end
