@@ -1,6 +1,6 @@
-%Script to develop en detection
+%Script to develop en detection, 5,8
 close all;
-%clear all;
+clear all;
 
 
 
@@ -30,10 +30,18 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for i = 48
+for i = 1:noImages
+  
+    
+    if isequal(AL_LeftCoordinates(i,:),[0 0])
+        x_error(i) = 0;
+        y_error(i) =0;
+        euclidean_error(i) = 0;
+        continue;
+    end
 imageIn = im2double(imread(strcat(DBpath,imageList{i})));
 
-end
+
 
 %% Define Search Region
 
@@ -71,11 +79,12 @@ K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2
 
 
 
+
 %%
 %Find location of global maximum
-imageMasked = K_masked_left;
+imageMasked = K_masked_right;
 [val ind]= max(imageMasked(:));
-[i,j] = ind2sub(size(imageMasked),ind);
+[k,j] = ind2sub(size(imageMasked),ind);
 % Isolate all pixels with maximum value
 mat1 = ones(size(imageMasked)).*val;
 mat2 = double(bsxfun(@eq,mat1,imageMasked));
@@ -85,10 +94,23 @@ if sum(mat3(:)) ~= 0
     [centroid_mat] = vsg('Centroid',mat3);
     [p1] = vsg('FWP',centroid_mat);
 else
-    p1 = [j i];
+    p1 = [j k];
+end
+maxLocation = pixel2mm([p1(1) p1(2)]);
+
+
+ind_Img = strmatch(imageList{i},dbList);
+  %Calute error & print to file
+   y_error(i) = abs(maxLocation(1) - landmarkLocations(8,1,ind_Img));
+   x_error(i) = abs(maxLocation(2) - landmarkLocations(8,2,ind_Img));
+   euclidean_error(i) = norm(maxLocation - landmarkLocations(8,:,ind_Img));
+
+
 end
 
-maxLocation = pixel2mm([p1(1) p1(2)]);
+
+
+
 
 
 %% Define 20mmx20mm window around detected peak;
@@ -101,35 +123,3 @@ imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + 
     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
     = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-
-
-%% Generate Bank
-filterBank = FilterBank();
-response = filterBank.filterImage(imageIn);
-responseMaskedRegion = response(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-clear response;
-
-%%
-k = 0;
-jets = zeros(size(responseMaskedRegion,1),size(responseMaskedRegion,2)*size(responseMaskedRegion,3));
-for i = 1:size(responseMaskedRegion,2)
-    for j = 1:size(responseMaskedRegion,3)
-        k = k+1;
-        jets(:,k) = responseMaskedRegion(:,i,j);
-    end
-    
-end
-% Identify the search region. Each pixel from this is then extracted
-
-
-
-
-% check similarity. For every pixel in the search window compare its jet to
-% that of each of the example image. The pixel with the closest value to
-% any of the example images is taken as the inner eye corner. Includes 40
-% 2D coefficients and 40 3D coefficients.
-
-% Write function to check similarity. Be able to specify 2D/3D/2D+3D. Also
-% be able to specify the location to check. 
-

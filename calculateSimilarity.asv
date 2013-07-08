@@ -1,0 +1,8 @@
+function [out] = calculateSimilarity(jetsIn,landmark,matchType)
+
+
+%% TEMP DESCRIPTION !!!!!!
+%function to calculate the similarity score for a region. Takes in a number
+%of jets and calculates the similarity for each of them. It then selects
+%the most similar in returns its index. In this way the location of the
+%ject 

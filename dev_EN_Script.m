@@ -1,6 +1,6 @@
 %Script to develop en detection
 close all;
-clear all;
+%clear all;
 
 
 
@@ -30,7 +30,7 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for i = 2
+for i = 48
 imageIn = im2double(imread(strcat(DBpath,imageList{i})));
 
 end
@@ -54,13 +54,19 @@ rightLimit_x = AL_RightCoordinates(i,1) + (0.5 * norm(AL_LeftCoordinates(i,1)-AL
 
 %% Detect curvature
 sigma = 15;
-[~, K] =  curvature(imageIn,sigma);
+[H, K] =  curvature(imageIn,sigma);
 
-K_masked_left = zeros(size(K));
-K_masked_left(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x)) = K(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x));
+%find where H > 0; ie convave
+H_concave = bsxfun(@max,zeros(size(H)),H);
+H_concave_bin = bsxfun(@eq,H_concave,H);
+
+K_concave = bsxfun(@times,H_concave_bin,K);
+
+K_masked_left = zeros(size(K_concave));
+K_masked_left(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x));
 
 K_masked_right = zeros(size(K));
-K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x)) = K(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x));
+K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x));
 
 
 
@@ -83,3 +89,47 @@ else
 end
 
 maxLocation = pixel2mm([p1(1) p1(2)]);
+
+
+%% Define 20mmx20mm window around detected peak;
+windowSizeTotal = [20 20];
+windowSize = windowSizeTotal./2;
+imageMaskedFinal = zeros(size(imageIn));
+image1 = imageIn;
+centerPoint = round(mm2pixel(maxLocation)); % round before to keep matlab happy
+imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
+    = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+
+
+%% Generate Bank
+filterBank = FilterBank();
+response = filterBank.filterImage(imageIn);
+responseMaskedRegion = response(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+clear response;
+
+%%
+k = 0;
+jets = zeros(size(responseMaskedRegion,1),size(responseMaskedRegion,2)*size(responseMaskedRegion,3));
+for i = 1:size(responseMaskedRegion,2)
+    for j = 1:size(responseMaskedRegion,3)
+        k = k+1;
+        jets(:,k) = responseMaskedRegion(:,i,j);
+    end
+    
+end
+% Identify the search region. Each pixel from this is then extracted
+
+
+
+
+% check similarity. For every pixel in the search window compare its jet to
+% that of each of the example image. The pixel with the closest value to
+% any of the example images is taken as the inner eye corner. Includes 40
+% 2D coefficients and 40 3D coefficients.
+
+% Write function to check similarity. Be able to specify 2D/3D/2D+3D. Also
+% be able to specify the location to check. 
+

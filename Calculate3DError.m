@@ -11,7 +11,7 @@ close all;
  
 filename = strcat(pathname,file_);
 A = importdata(filename);
-coordinates = [A(:,2),A(:,1)];
+coordinates = [A(:,1),A(:,2)];
 
 % load list of images
 DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
