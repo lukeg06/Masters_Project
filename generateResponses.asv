@@ -19,15 +19,14 @@ savePath = 'C:\Databases\Texas3DFR\GaborResponses\';
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-[dbList3D,~]= getDBInfo(DBpath,'range');
-[dbList2D,~]= getDBInfo(DBpath,'Portrait');
+[dbList,~]= getDBInfo(DBpath,'range');
 imageList3D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_3D.txt');
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
 noImages = size(imageList2D,1);
 
 %% Generate Filter Bank
 filterBank = FilterBank();
-for i = 1:noImages
+for i = 1
     imageIn3D = im2double(imread(strcat(DBpath,imageList3D{i})));
     imageIn2D = im2double(rgb2gray(imread(strcat(DBpath,imageList2D{i}))));
     
@@ -36,8 +35,8 @@ for i = 1:noImages
     response3D = filterBank.filterImage(imageIn3D);
     response2D = filterBank.filterImage(imageIn2D);
     
-    ind3D = strmatch(imageList3D{i},dbList3D);
-    ind2D = strmatch(imageList2D{i},dbList2D);
+    ind3D = strmatch(imageList3D{i},dbList);
+    ind2D = strmatch(imageList2D{i},dbList);
     % Isolate responses at landmark locations.
     EN.left.val3D = response3D(:,mm2pixel(landmarkLocations(5,2,ind3D)),mm2pixel(landmarkLocations(5,1,ind3D)));
     EN.left.val2D = response2D(:,mm2pixel(landmarkLocations(5,2,ind2D)),mm2pixel(landmarkLocations(5,1,ind2D)));
@@ -59,8 +58,7 @@ for i = 1:noImages
     subject.EX = EX;
     subject.CH = CH;
     fileName = imageList3D{i};
-    saveFileName = strcat(savePath,fileName(1:end-10),'_jet');
-    save(saveFileName,'subject');
+    saveFileName = strcat(savePath,fileName(1:end-10));
     
     
     

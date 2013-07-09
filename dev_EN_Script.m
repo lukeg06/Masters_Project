@@ -1,6 +1,6 @@
 %Script to develop en detection
 close all;
-%clear all;
+clear all;
 
 
 
@@ -30,7 +30,7 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for i = 48
+for i = 7
 imageIn = im2double(imread(strcat(DBpath,imageList{i})));
 
 end
@@ -112,16 +112,39 @@ clear response;
 
 %%
 k = 0;
+% jets[40,noPixels]
+jetIndex =zeros(size(responseMaskedRegion,2)*size(responseMaskedRegion,3),2);
 jets = zeros(size(responseMaskedRegion,1),size(responseMaskedRegion,2)*size(responseMaskedRegion,3));
 for i = 1:size(responseMaskedRegion,2)
     for j = 1:size(responseMaskedRegion,3)
         k = k+1;
         jets(:,k) = responseMaskedRegion(:,i,j);
+        jetIndex(k,:) = [i j];
     end
     
 end
 % Identify the search region. Each pixel from this is then extracted
 
+[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','3D');
+c = jetIndex(outCalculateSimilarity.index,:);
+
+temp = jetIndex;
+a = zeros(size(imageIn));
+b = zeros(size(responseMaskedRegion,2),size(responseMaskedRegion,3));
+b(c(1),c(2)) = 1;
+a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
+    = b;
+
+[~,p] = max(a(:));
+[c1(2),c1(1)] = ind2sub(size(a),p);
+
+en_loc = pixel2mm(c1);
+ind_Img = strmatch(imageList{7},dbList);
+  
+   y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img))
+   x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img))
+   euclidean_error = norm(en_loc - landmarkLocations(5,:,ind_Img))
 
 
 

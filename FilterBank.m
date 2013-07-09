@@ -15,6 +15,7 @@ classdef  FilterBank < handle
     methods
         function this = FilterBank()
             addpath('.\toolboxes\Gabor\');
+            addpath('.\toolboxes\convolve2\');
             this.Delt2 = this.Delt*this.Delt;
             this.GW =  zeros(this.R,this.C,40);
             this.generateFilterBank();
@@ -40,7 +41,7 @@ classdef  FilterBank < handle
             response = zeros(size(this.GW,3),size(imageIn,1),size(imageIn,2));
             for i = 1:size(this.GW,3)
                 currentFilter = this.getFilter(i);
-                response(i,:,:) = conv2(imageIn,currentFilter,'same');
+                response(i,:,:) = convolve2(imageIn,currentFilter,'same');
            
                 
             end
