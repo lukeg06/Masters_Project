@@ -5,6 +5,8 @@ clear all;
 
 
 
+imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
+
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
 DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
@@ -30,7 +32,7 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for i = 48
+for i = 1
 imageIn = im2double(imread(strcat(DBpath,imageList{i})));
 
 end
@@ -125,7 +127,7 @@ for i = 1:size(responseMaskedRegion,2)
 end
 % Identify the search region. Each pixel from this is then extracted
 
-[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','2D',temp);
+[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','3D',jetIndex);
 c = jetIndex(outCalculateSimilarity.index,:);
 
 temp = jetIndex;
@@ -137,14 +139,14 @@ a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSiz
     = b;
 
 [~,p] = max(a(:));
-[c1(1),c1(2)] = ind2sub(size(a),p);
+[c1(2),c1(1)] = ind2sub(size(a),p);
 
 en_loc = pixel2mm(c1);
-ind_Img = strmatch(imageList{i},dbList);
+ind_Img = strmatch(imageList{1},dbList);
   
-   y_error(i) = abs(en_loc(1) - landmarkLocations(8,1,ind_Img));
-   x_error(i) = abs(en_loc(2) - landmarkLocations(8,2,ind_Img));
-   euclidean_error(i) = norm(en_loc - landmarkLocations(8,:,ind_Img));
+   y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img))
+   x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img))
+   euclidean_error = norm(en_loc - landmarkLocations(5,:,ind_Img))
 
 
 

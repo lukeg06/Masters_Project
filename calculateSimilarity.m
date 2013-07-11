@@ -1,4 +1,4 @@
-function [out] = calculateSimilarity(jetsIn,landmark,matchType)
+function [out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
 
 
 %% TEMP DESCRIPTION !!!!!!
@@ -36,9 +36,10 @@ for i = 1:noImages
             error('Incorrect Landmark');
     end
     for j = 1:size(jetsIn,2)
-        similarityScores(i,j) = similarityScore(jetsIn(:,j),landmarkJets,matchType);
+        similarityScores(i,j) = similarityScore2(jetsIn(:,j),landmarkJets,matchType);
         
     end
+   
 end
 
 % Find max similarity score;
@@ -46,15 +47,15 @@ end
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
-% error('yo')
-% for j = 1:89
-% for i = 1:(63*63)
-% l = temp(i,:);
-% imageSim(l(1),l(2)) = similarityScores(j,i);
-% end
-% imagesc(imageSim)
-% pause;
-% end
+ error('yo')
+for j = 1:89
+for i = 1:(63*63)
+l = temp(i,:);
+imageSim(l(1),l(2)) = similarityScores(j,i);
+end
+imagesc(imageSim)
+pause;
+end
 
 
 end
@@ -74,8 +75,34 @@ switch matchType
         error('Incorrect MatchType');
 end
 %Compare magnitudes.
-j1 = real(testJet);
-j2 = real(actualJet);
+j1 = abs(testJet);
+j2 = abs(actualJet);
 score = sum(j1.*j2)./ sqrt(sum(j1.^2).*sum(j2.^2));
+
+end
+
+
+function [score] = similarityScore2(testJet,landmarkJets,matchType)
+
+switch matchType
+    case '3D'
+        actualJet = landmarkJets.val3D;
+    case '2D'
+        actualJet = landmarkJets.val2D;
+        
+    case '2D + 3D'
+        %to do
+    otherwise
+        error('Incorrect MatchType');
+end
+
+
+
+%Compare magnitudes.
+j1 = testJet;
+j2 = actualJet;
+score = (sum(abs(j1).*abs(j2).*cos(angle(j1)-angle(j2))))./ sqrt(sum(abs(j1).^2).*sum(abs(j2).^2));
+
+
 
 end

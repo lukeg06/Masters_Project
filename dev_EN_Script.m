@@ -5,6 +5,8 @@ clear all;
 
 
 
+imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
+
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
 DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
@@ -30,8 +32,8 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for i = 7
-imageIn = im2double(imread(strcat(DBpath,imageList{i})));
+for imNo = 7
+imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
 
 end
 
@@ -44,11 +46,11 @@ V_y = min(i_row);
 
 prn_x = prncoordinates(2);
 
-upperLimit_y = prncoordinates(i,2)- (0.3803*1.5*norm(prncoordinates(i,2)-pixel2mm(V_y)));
-lowerLimit_y = prncoordinates(i,2)- (0.3803*0.3803*norm(prncoordinates(i,2)-pixel2mm(V_y)));
+upperLimit_y = prncoordinates(imNo,2)- (0.3803*1.5*norm(prncoordinates(imNo,2)-pixel2mm(V_y)));
+lowerLimit_y = prncoordinates(imNo,2)- (0.3803*0.3803*norm(prncoordinates(imNo,2)-pixel2mm(V_y)));
 
-leftLimit_x = AL_LeftCoordinates(i,1) - (0.5 * norm(AL_LeftCoordinates(i,1)-AL_RightCoordinates(i,1)));
-rightLimit_x = AL_RightCoordinates(i,1) + (0.5 * norm(AL_LeftCoordinates(i,1)-AL_RightCoordinates(i,1)));
+leftLimit_x = AL_LeftCoordinates(imNo,1) - (0.5 * norm(AL_LeftCoordinates(imNo,1)-AL_RightCoordinates(imNo,1)));
+rightLimit_x = AL_RightCoordinates(imNo,1) + (0.5 * norm(AL_LeftCoordinates(imNo,1)-AL_RightCoordinates(imNo,1)));
 
 
 
@@ -108,7 +110,7 @@ filterBank = FilterBank();
 response = filterBank.filterImage(imageIn);
 responseMaskedRegion = response(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-clear response;
+%clear response;
 
 %%
 k = 0;
@@ -125,7 +127,7 @@ for i = 1:size(responseMaskedRegion,2)
 end
 % Identify the search region. Each pixel from this is then extracted
 
-[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','3D');
+[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','3D',jetIndex);
 c = jetIndex(outCalculateSimilarity.index,:);
 
 temp = jetIndex;
@@ -140,7 +142,7 @@ a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSiz
 [c1(2),c1(1)] = ind2sub(size(a),p);
 
 en_loc = pixel2mm(c1);
-ind_Img = strmatch(imageList{7},dbList);
+ind_Img = strmatch(imageList{imNo},dbList);
   
    y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img))
    x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img))
