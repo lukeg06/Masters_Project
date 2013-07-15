@@ -5,7 +5,7 @@ clear all;
 
 
 
-imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
+imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
 
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
@@ -27,14 +27,14 @@ AL_RightCoordinates = A ;clear A;
 
 %load landmarks & image list.
 [landmarkLocations] = loadLandmarks(landmarkPath);
-[dbList,~]= getDBInfo(DBpath,'portr');
+[dbList,~]= getDBInfo(DBpath,'Portrait');
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for imNo = 99
+for imNo = 1
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
-    imageIn2D = im2double(imread(strcat(DBpath,imageList2D{imNo})));
+    imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
 end
 
 %% Define Search Region
@@ -121,7 +121,7 @@ clear response2D;
 k = 0;
 % jets[40,noPixels]
 
-method = '3D';
+method = '2D';
 
 jetIndex =zeros(size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3),2);
 switch method

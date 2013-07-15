@@ -19,6 +19,7 @@ similarityScores = zeros(noImages,size(jetsIn,2));
 for i = 1:noImages
     subject = importdata(strcat(DBpath,imageList{i}));
     
+    
     switch lower(landmark)
         case 'en left'
             landmarkJets = subject.EN.left;
@@ -35,6 +36,7 @@ for i = 1:noImages
         otherwise
             error('Incorrect Landmark');
     end
+    
     for j = 1:size(jetsIn,2)
         similarityScores(i,j) = similarityScore2(jetsIn(:,j),landmarkJets,matchType);
         
@@ -47,15 +49,15 @@ end
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
- error('yo')
-for j = 1:89
-for i = 1:(63*63)
-l = temp(i,:);
-imageSim(l(1),l(2)) = similarityScores(j,i);
-end
-imagesc(imageSim)
-pause;
-end
+%  error('yo')
+% for j = 1:89
+% for i = 1:(63*63)
+% l = temp(i,:);
+% imageSim(l(1),l(2)) = similarityScores(j,i);
+% end
+% imagesc(imageSim)
+% pause;
+% end
 
 
 end
@@ -71,6 +73,8 @@ switch matchType
         
     case '2D + 3D'
         %to do
+        
+        actualJet = [landmarkJets.val2D;landmarkJets.val3D];
     otherwise
         error('Incorrect MatchType');
 end
@@ -91,7 +95,7 @@ switch matchType
         actualJet = landmarkJets.val2D;
         
     case '2D + 3D'
-        %to do
+         actualJet = [landmarkJets.val2D;landmarkJets.val3D];
     otherwise
         error('Incorrect MatchType');
 end

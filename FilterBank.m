@@ -3,8 +3,8 @@ classdef  FilterBank < handle
     properties( Access =  private)
         R = 128;
         C = 128;
-        Kmax = pi / 2;
-        f = sqrt( 2 );
+        Kmax = 0.5;
+        f = 2;
         Delt = 2 * pi;
         Delt2;
         GW;

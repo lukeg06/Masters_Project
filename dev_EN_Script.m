@@ -5,7 +5,7 @@ clear all;
 
 
 
-imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
+imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
@@ -32,9 +32,9 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
 %%
-for imNo = 7
-imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
-
+for imNo = 111
+    imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
+    imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
 end
 
 %% Define Search Region
@@ -107,32 +107,65 @@ imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + 
 
 %% Generate Bank
 filterBank = FilterBank();
-response = filterBank.filterImage(imageIn);
-responseMaskedRegion = response(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+response3D = filterBank.filterImage(imageIn);
+responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-%clear response;
+clear response3D;
+
+response2D = filterBank.filterImage(imageIn2D);
+responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
+    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+clear response2D;
 
 %%
 k = 0;
 % jets[40,noPixels]
-jetIndex =zeros(size(responseMaskedRegion,2)*size(responseMaskedRegion,3),2);
-jets = zeros(size(responseMaskedRegion,1),size(responseMaskedRegion,2)*size(responseMaskedRegion,3));
-for i = 1:size(responseMaskedRegion,2)
-    for j = 1:size(responseMaskedRegion,3)
-        k = k+1;
-        jets(:,k) = responseMaskedRegion(:,i,j);
-        jetIndex(k,:) = [i j];
-    end
-    
+
+method = '2D + 3D';
+
+jetIndex =zeros(size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3),2);
+switch method
+    case '2D + 3D'
+        jets = zeros(80,size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3));
+        for i = 1:size(responseMaskedRegion3D,2)
+            for j = 1:size(responseMaskedRegion3D,3)
+                k = k+1;
+                jets(:,k) = [responseMaskedRegion2D(:,i,j);responseMaskedRegion3D(:,i,j)];
+                jetIndex(k,:) = [i j];
+            end
+            
+        end
+    case '2D'
+         jets = zeros(40,size(responseMaskedRegion2D,2)*size(responseMaskedRegion2D,3));
+        for i = 1:size(responseMaskedRegion2D,2)
+            for j = 1:size(responseMaskedRegion3D,3)
+                k = k+1;
+                jets(:,k) = [responseMaskedRegion2D(:,i,j)];
+                jetIndex(k,:) = [i j];
+            end
+            
+        end
+        
+    case '3D'
+         jets = zeros(40,size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3));
+        for i = 1:size(responseMaskedRegion3D,2)
+            for j = 1:size(responseMaskedRegion3D,3)
+                k = k+1;
+                jets(:,k) = [responseMaskedRegion3D(:,i,j)];
+                jetIndex(k,:) = [i j];
+            end
+            
+        end
 end
+
 % Identify the search region. Each pixel from this is then extracted
 
-[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left','3D',jetIndex);
+[outCalculateSimilarity] =  calculateSimilarity(jets,'EN Left',method,jetIndex);
 c = jetIndex(outCalculateSimilarity.index,:);
 
 temp = jetIndex;
 a = zeros(size(imageIn));
-b = zeros(size(responseMaskedRegion,2),size(responseMaskedRegion,3));
+b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
 b(c(1),c(2)) = 1;
 a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
@@ -142,11 +175,12 @@ a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSiz
 [c1(2),c1(1)] = ind2sub(size(a),p);
 
 en_loc = pixel2mm(c1);
-ind_Img = strmatch(imageList{imNo},dbList);
-  
-   y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img))
-   x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img))
-   euclidean_error = norm(en_loc - landmarkLocations(5,:,ind_Img))
+
+    ind_Img = strmatch(imageList{imNo},dbList);
+
+y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img))
+x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img))
+euclidean_error = norm(en_loc - landmarkLocations(5,:,ind_Img))
 
 
 
@@ -156,5 +190,5 @@ ind_Img = strmatch(imageList{imNo},dbList);
 % 2D coefficients and 40 3D coefficients.
 
 % Write function to check similarity. Be able to specify 2D/3D/2D+3D. Also
-% be able to specify the location to check. 
+% be able to specify the location to check.
 
