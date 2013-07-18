@@ -1,4 +1,4 @@
 
 boxplot([data(:,2) data(:,3) data(:,4)],'labels',{'X Error(mm)','Y Error(mm)','Radial Error(mm)'})
-title('Right Alar Localisation')
-title('Right Localisation Error')
+title('M''')
+title('M'' Error')

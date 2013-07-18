@@ -24,16 +24,16 @@ fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(
 %set location of template PRN
 estimatedLocation = landmarkLocations(19,:,996);
 
-for i = 106
+for i = 1:noImages
  imageIn = im2double(imread(strcat(DBpath,imageList{i})));
- [PRNLocation] = localisePRN(imageIn,estimatedLocation,17,'true');
+ [PRNLocation] = localisePRN(imageIn,estimatedLocation,17,'false');
  
   %Write PRNLocation to file
   fprintf(prnLocationFileID,'%d\t%f\t%f\n',i,PRNLocation(1),PRNLocation(2));
   
   ind = strmatch(imageList{i},dbList);
   %Calute error & print to file
-   y_error = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
+   y_error = abs(PRNLocation(2) - landmarkLocations(19,1,ind));
    x_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
    euclidean_error = norm(PRNLocation - landmarkLocations(19,:,ind));
    

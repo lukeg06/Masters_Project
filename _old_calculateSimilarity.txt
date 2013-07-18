@@ -15,10 +15,10 @@ DBpath = 'C:\Databases\Texas3DFR\GaborResponses\';
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_jet.txt');
 
 similarityScores = zeros(noImages,size(jetsIn,2));
-actualJets = zeros(size(jetsIn,1),noImages);
+
 for i = 1:noImages
     subject = importdata(strcat(DBpath,imageList{i}));
-    
+  
     
     switch lower(landmark)
         case 'en left'
@@ -37,47 +37,44 @@ for i = 1:noImages
             error('Incorrect Landmark');
     end
     
+      
+        switch matchType
+            case '3D'
+                actualJet = landmarkJets.val3D;
+            case '2D'
+                actualJet = landmarkJets.val2D;
+                
+            case '2D + 3D'
+                actualJet = [landmarkJets.val2D;landmarkJets.val3D];
+            otherwise
+                error('Incorrect MatchType');
+        end
+        
+        
+        landmarkJets.abs_val = abs(actualJet);
+        landmarkJets.angle_val = angle(actualJet);
     
-    switch matchType
-        case '3D'
-            actualJet = landmarkJets.val3D;
-        case '2D'
-            actualJet = landmarkJets.val2D;
-            
-        case '2D + 3D'
-            actualJet = [landmarkJets.val2D;landmarkJets.val3D];
-        otherwise
-            error('Incorrect MatchType');            
+    for j = 1:size(jetsIn,2)
+      
+        similarityScores(i,j) = similarityScore2(jetsIn(:,j),landmarkJets);
+        
     end
     
-    actualJets(:,i) = actualJet;
 end
-
-landmarkJets.abs_val = abs(actualJets);
-landmarkJets.angle_val = angle(actualJets);
-clear actualJets;
-for j = 1:size(jetsIn,2)
-    
-    
-    similarityScores(:,j) = similarityScore2(jetsIn(:,j),landmarkJets);
-    
-end
-
-
 
 % Find max similarity score;
 [maxVal maxInd] = max(similarityScores(:));
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
-error('yo')
-for j = 17
-    for i = 1:(21*21)
-        l = temp(i,:);
-        imageSim(l(1),l(2)) = similarityScores(j,i);
-    end
-    imagesc(imageSim)
-    pause;
+ error('yo')
+for j = 1:89
+for i = 1:(63*63)
+l = temp(i,:);
+imageSim(l(1),l(2)) = similarityScores(j,i);
+end
+imagesc(imageSim)
+pause;
 end
 
 
@@ -113,7 +110,7 @@ function [score] = similarityScore2(testJet,landmarkJets)
 
 
 %Compare magnitudes.
- j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
+j1 = testJet;
 j1_abs = abs(j1);
 j2_abs = landmarkJets.abs_val;
 

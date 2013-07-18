@@ -1,3 +1,5 @@
+% delete me
+
 %Script to develop en detection
 close all;
 clear all;
@@ -91,11 +93,11 @@ else
     p1 = [j i];
 end
 
-maxLocation = pixel2mm([p1(1) p1(2)]);
+maxLocation = pixel2mm([p1(1) p1(2)])./3;
 
 
 %% Define 20mmx20mm window around detected peak;
-windowSizeTotal = [20 20];
+windowSizeTotal = [20 20]./3;
 windowSize = windowSizeTotal./2;
 imageMaskedFinal = zeros(size(imageIn));
 image1 = imageIn;
@@ -108,14 +110,12 @@ imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + 
 
 %% Generate Bank
 filterBank = FilterBank();
-response3D = filterBank.filterImage(imageIn);
-responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+response3D = filterBank.filterImage(imresize(imageIn,1/3));
+responseMaskedRegion3D = response3D;
 clear response3D;
 
-response2D = filterBank.filterImage(imageIn2D);
-responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+response2D = filterBank.filterImage(imresize(imageIn2D,1/3));
+responseMaskedRegion2D =response2D;
 clear response2D;
 
 %%
@@ -165,7 +165,7 @@ end
 c = jetIndex(outCalculateSimilarity.index,:);
 
 temp = jetIndex;
-a = zeros(size(imageIn));
+a = zeros(size(imresize(imageIn),1/3));
 b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
 b(c(1),c(2)) = 1;
 a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
@@ -175,7 +175,7 @@ a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSiz
 [~,p] = max(a(:));
 [c1(2),c1(1)] = ind2sub(size(a),p);
 
-en_loc = pixel2mm(c1);
+en_loc = pixel2mm(c1).*3;
 
     ind_Img = strmatch(imageList{imNo},dbList);
 

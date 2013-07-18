@@ -33,8 +33,8 @@ for i = 1:noImages
   
   ind = strmatch(imageList{i},dbList);
   %Calute error & print to file
-   y_error = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
-   x_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
+   y_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
+   x_error = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
    euclidean_error = norm(PRNLocation - landmarkLocations(19,:,ind));
    
    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',i,x_error,y_error,euclidean_error);

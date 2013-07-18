@@ -13,7 +13,7 @@ clear all;
 
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
-DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
+DBpath = 'C:\Databases\Texas3DFR\Resized_PreprocessedImages\';
 outputPath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\';
 savePath = 'C:\Databases\Texas3DFR\GaborResponses\';
 
@@ -24,6 +24,8 @@ savePath = 'C:\Databases\Texas3DFR\GaborResponses\';
 imageList3D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_3D.txt');
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_2D.txt');
 noImages = size(imageList2D,1);
+
+landmarkLocations = landmarkLocations./3;
 
 %% Generate Filter Bank
 filterBank = FilterBank();

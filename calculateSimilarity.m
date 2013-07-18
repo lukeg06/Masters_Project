@@ -15,7 +15,7 @@ DBpath = 'C:\Databases\Texas3DFR\GaborResponses\';
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_jet.txt');
 
 similarityScores = zeros(noImages,size(jetsIn,2));
-
+actualJets = zeros(size(jetsIn,1),noImages);
 for i = 1:noImages
     subject = importdata(strcat(DBpath,imageList{i}));
     
@@ -37,75 +37,87 @@ for i = 1:noImages
             error('Incorrect Landmark');
     end
     
-    for j = 1:size(jetsIn,2)
-        similarityScores(i,j) = similarityScore2(jetsIn(:,j),landmarkJets,matchType);
-        
+    
+    switch matchType
+        case '3D'
+            actualJet = landmarkJets.val3D;
+        case '2D'
+            actualJet = landmarkJets.val2D;
+            
+        case '2D + 3D'
+            actualJet = [landmarkJets.val2D;landmarkJets.val3D];
+        otherwise
+            error('Incorrect MatchType');            
     end
-   
+    
+    actualJets(:,i) = actualJet;
 end
+
+landmarkJets.abs_val = abs(actualJets);
+landmarkJets.angle_val = angle(actualJets);
+clear actualJets;
+for j = 1:size(jetsIn,2)
+    
+    
+    similarityScores(:,j) = similarityScore2(jetsIn(:,j),landmarkJets);
+    
+end
+
+
 
 % Find max similarity score;
 [maxVal maxInd] = max(similarityScores(:));
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
-%  error('yo')
-% for j = 1:89
-% for i = 1:(63*63)
-% l = temp(i,:);
-% imageSim(l(1),l(2)) = similarityScores(j,i);
+% error('yo')
+% for j = 20
+%     for i = 1:(21*21)
+%         l = temp(i,:);
+%         imageSim(l(1),l(2)) = similarityScores(j,i);
+%     end
+%     imagesc(imageSim)
+%     pause;
 % end
-% imagesc(imageSim)
-% pause;
-% end
 
 
 end
 
 
-function [score] = similarityScore(testJet,landmarkJets,matchType)
 
-switch matchType
-    case '3D'
-        actualJet = landmarkJets.val3D;
-    case '2D'
-        actualJet = landmarkJets.val2D;
-        
-    case '2D + 3D'
-        %to do
-        
-        actualJet = [landmarkJets.val2D;landmarkJets.val3D];
-    otherwise
-        error('Incorrect MatchType');
-end
-%Compare magnitudes.
-j1 = abs(testJet);
-j2 = abs(actualJet);
-score = sum(j1.*j2)./ sqrt(sum(j1.^2).*sum(j2.^2));
+function [score] = similarityScore(testJet,landmarkJets)
 
-end
-
-
-function [score] = similarityScore2(testJet,landmarkJets,matchType)
-
-switch matchType
-    case '3D'
-        actualJet = landmarkJets.val3D;
-    case '2D'
-        actualJet = landmarkJets.val2D;
-        
-    case '2D + 3D'
-         actualJet = [landmarkJets.val2D;landmarkJets.val3D];
-    otherwise
-        error('Incorrect MatchType');
-end
 
 
 
 %Compare magnitudes.
-j1 = testJet;
-j2 = actualJet;
-score = (sum(abs(j1).*abs(j2).*cos(angle(j1)-angle(j2))))./ sqrt(sum(abs(j1).^2).*sum(abs(j2).^2));
+ j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
+j1_abs = abs(j1);
+j2_abs = landmarkJets.abs_val;
+
+j1_angle = angle(j1);
+j2_angle = landmarkJets.angle_val;
+
+score = sum(j1_abs.*j2_abs)./  sqrt(sum(j1_abs.^2).*sum(j2_abs.^2));
+
+
+
+end
+
+function [score] = similarityScore2(testJet,landmarkJets)
+
+
+
+
+%Compare magnitudes.
+ j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
+j1_abs = abs(j1);
+j2_abs = landmarkJets.abs_val;
+
+j1_angle = angle(j1);
+j2_angle = landmarkJets.angle_val;
+
+score = (sum(j1_abs.*j2_abs.*cos(j1_angle-j2_angle)))./ sqrt(sum(j1_abs.^2).*sum(j2_abs.^2));
 
 
 

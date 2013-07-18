@@ -3,8 +3,16 @@ classdef  FilterBank < handle
     properties( Access =  private)
         R = 128;
         C = 128;
-        Kmax = 0.5;
-        f = 2;
+        Wiscott
+                Kmax =pi/2;
+                f = sqrt(2);
+        
+        % Jan
+        %         Kmax = 0.5;
+        %         f = 2;
+        
+   
+        
         Delt = 2 * pi;
         Delt2;
         GW;
@@ -42,7 +50,7 @@ classdef  FilterBank < handle
             for i = 1:size(this.GW,3)
                 currentFilter = this.getFilter(i);
                 response(i,:,:) = convolve2(imageIn,currentFilter,'same');
-           
+                
                 
             end
             
