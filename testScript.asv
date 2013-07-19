@@ -2,7 +2,7 @@
 close all
 clear all
 
-% Test EN localisations. Should takes 24hrs.
+% Test EN localisations.
 try
  test_localiseEN_Left('2D')
 catch exception

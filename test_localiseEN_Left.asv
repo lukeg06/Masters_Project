@@ -1,8 +1,6 @@
 %Script to localise left EN.
 
-close all;
-clear all;
-
+function test_LocaliseEN_Left(method)
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
 %Define paths etc
@@ -31,8 +29,10 @@ noImages = size(imageList,1);
 
 % Define savefile paths
 %open files for writing results
-en_Left_LocationFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_left_Locations.txt','w');
-test_localiseENLeftResultsFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseENLeftResults.txt','w');
+savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_left_Locations_',method,'.txt');
+
+en_Left_LocationFileID = fopen(savefilename1,'w');
+test_localiseENLeftResultsFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseENLeftResults_2D.txt','w');
 
 fprintf(test_localiseENLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
@@ -40,105 +40,20 @@ fprintf(test_localiseENLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Err
 
 
 %%
+method = '2D';
 for imNo = 1:noImages
    
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
-    [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:));
+    [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);
     
     ind_Img = strmatch(imageList{imNo},dbList);
     en_loc = Output.EnLeftLocation;
-    y_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img));
-    x_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img));
+    x_error = abs(en_loc(1) - landmarkLocations(5,1,ind_Img));
+    y_error = abs(en_loc(2) - landmarkLocations(5,2,ind_Img));
     euclidean_error = norm(en_loc - landmarkLocations(5,:,ind_Img));
     
     fprintf(test_localiseENLeftResultsFileID,'%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
     fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
      fprintf(en_Left_LocationFileID,'%f\t%f\n',en_loc(1),en_loc(2));
-     
-     %% Define 20mmx20mm window around detected peak;
-     
-   maxLocation = 
-windowSizeTotal = [20 30]./3;
-windowSize = windowSizeTotal./2;
-imageMaskedFinal = zeros(size(imageIn));
-image1 = imageIn;
-centerPoint = round(mm2pixel(maxLocation./3)); % round before to keep matlab happy
-% imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-%     = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-
-%% Load
-
-
-%% Generate Bank
-filterBank = FilterBank();
-response3D = filterBank.filterImage(imresize(imageIn,1/3));
-responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-clear response3D;
-
-response2D = filterBank.filterImage(imResize(imageIn2D,1/3));
-responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-clear response2D;
-
-%%
-k = 0;
-% jets[40,noPixels]
-
-method = '2D + 3D';
-
-jetIndex =zeros(size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3),2);
-switch method
-    case '2D + 3D'
-        jets = zeros(80,size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3));
-        for i = 1:size(responseMaskedRegion3D,2)
-            for j = 1:size(responseMaskedRegion3D,3)
-                k = k+1;
-                jets(:,k) = [responseMaskedRegion2D(:,i,j);responseMaskedRegion3D(:,i,j)];
-                 jetIndex(k,:) = [i j];
-            end
-            
-        end
-    case '2D'
-         jets = zeros(40,size(responseMaskedRegion2D,2)*size(responseMaskedRegion2D,3));
-        for i = 1:size(responseMaskedRegion2D,2)
-            for j = 1:size(responseMaskedRegion3D,3)
-                k = k+1;
-                jets(:,k) = [responseMaskedRegion2D(:,i,j)];
-                jetIndex(k,:) = [i j];
-            end
-            
-        end
-        
-    case '3D'
-         jets = zeros(40,size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3));
-        for i = 1:size(responseMaskedRegion3D,2)
-            for j = 1:size(responseMaskedRegion3D,3)
-                k = k+1;
-                jets(:,k) = [responseMaskedRegion3D(:,i,j)];
-                 jetIndex(k,:) = [i j];
-            end
-            
-        end
-end
-
-% Identify the search region. Each pixel from this is then extracted
-
-[outCalculateSimilarity] =  calculateSimilarity(jets,'EX Left',method,jetIndex);
-c = jetIndex(outCalculateSimilarity.index,:);
-
-a = zeros(size(imageIn));
-b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
-b(c(1),c(2)) = 1;
-a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-    = b;
-
-[~,p] = max(a(:));
-[c1(2),c1(1)] = ind2sub(size(a),p);
-
-Output.ExLeftLocation = pixel2mm(c1.*3);
 end

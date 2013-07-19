@@ -1,7 +1,5 @@
 %Script to localise left EN.
-
-close all;
-clear all;
+function test_localiseEN_Right(method)
 
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
@@ -31,8 +29,12 @@ noImages = size(imageList,1);
 
 % Define savefile paths
 %open files for writing results
-en_Right_LocationFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_right_Locations_2D.txt','w');
-test_localiseENRightResultsFileID = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseENRightResults_2D.txt','w');
+save_filename1 = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_right_Locations_',method,'.txt');
+save_filename2 = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseENRightResults_',method,'.txt');
+
+en_Right_LocationFileID = fopen(save_filename1,'w');
+
+test_localiseENRightResultsFileID = fopen(save_filename2,'w');
 
 fprintf(test_localiseENRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
@@ -40,7 +42,7 @@ fprintf(test_localiseENRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Er
 
 
 %%
-method = '2D';
+
 for imNo = 1:noImages
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
@@ -57,3 +59,6 @@ for imNo = 1:noImages
     fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
      fprintf(en_Right_LocationFileID,'%f\t%f\n',en_loc(1),en_loc(2));
 end
+
+fclose(en_Right_LocationFileID);
+flose(test_localiseENRightResultsFileID);
