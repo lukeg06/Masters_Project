@@ -2,25 +2,32 @@
 close all
 clear all
 
-% Test EN localisations.
-try
- test_localiseEN_Left('2D')
-catch exception
-    fprintf('Error left \n')
-    
-end
-
-try
- test_localiseEN_Left('3D')
-catch exception
-    fprintf('Error left \n')
-    
-end
+% % Test EN localisations. Should takes 24hrs.
+% try
+%  test_localiseEN_Left('2D')
+% catch exception
+%     fprintf('Error left \n')
+%     
+% end
+% 
+% try
+%  test_localiseEN_Left('3D')
+% catch exception
+%     fprintf('Error left \n')
+%     
+% end
 
 
 try
  test_localiseEN_Right('3D');
 catch exception
     fprintf('Error right\n')
+    
+end
+
+try
+ dev_CH_Script;
+catch exception
+    
     
 end

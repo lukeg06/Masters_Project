@@ -31,8 +31,16 @@ AL_RightCoordinates = A ;clear A;
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
-upper_lip_error = zeros(1060);
-lower_lip_error = zeros(1060);
+
+
+savefilename1 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\localise_CH_Sigma.txt');
+
+FileID = fopen(savefilename1,'w');
+
+fprintf(FileID,'sigma\tupper_lip_error\tlower_lip_error\n');
+for sigma = 1:30
+    upper_lip_error = 0;
+lower_lip_error = 0;
 for imNo = 1:noImages
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
@@ -47,7 +55,6 @@ for imNo = 1:noImages
     
     ind_Img = strmatch(imageList{imNo},dbList);
     
-    sigma = 10;
     
     [H, K] =  curvature(imageIn,sigma);
     
@@ -62,12 +69,24 @@ for imNo = 1:noImages
     lower_limit = pixel2mm(mm2pixel(prncoordinates(imNo,2)) + ind(3)) ; 
     upper_limit = pixel2mm((mm2pixel(prncoordinates(imNo,2)) + ind(2)) );
     
-    upper_lip = landmarkLocations(21,2,ind_Img);
-    lower_lip =  landmarkLocations(24,2,ind_Img);
+    ch = landmarkLocations(15,2,ind_Img);
+
 %     if size(ind,2)~= 4
 %         fprintf('%d',imNo)
 %     end
-    
-    upper_lip_error(imNo) = abs(upper_lip - upper_limit);
-     lower_lip_error(imNo) = abs(lower_lip - lower_limit);
+    if ch < upper_limit
+    upper_lip_error = upper_lip_error +1;
+    end
+
+    if ch > lower_limit
+    lower_lip_error = lower_lip_error +1;
+    end
+     
+   
 end
+
+fprintf(FileID,'%d\t%d\t%d\n',sigma,upper_lip_error,lower_lip_error);
+ 
+end
+
+fclose(FileID);

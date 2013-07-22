@@ -32,9 +32,9 @@ centerPoint = round(mm2pixel(maxLocation./3)); % round before to keep matlab hap
 filterBank = FilterBank();
 response3D = filterBank.filterImage(imresize(imageIn,1/3));
 
-if centerPoint(1) + round(windowSize(1)/0.32) < size(response3D,3)
+if centerPoint(1) + round(windowSize(1)/0.32) > size(response3D,3)
    
-    centerPoint(1) = round(windowSize(1)/0.32) -1;
+    centerPoint(1) = size(response3D,3) - round(windowSize(1)/0.32);
 end
 
 responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
