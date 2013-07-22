@@ -8,7 +8,7 @@ filename = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\
 A = importdata(filename);
 EN_RightCoordinates = A ;clear A;
 
-m_locs = (mCoordinates + EN_RightCoordinates)./2;
+m_locs = (EN_LeftCoordinates + EN_RightCoordinates)./2;
 %%
 
 
