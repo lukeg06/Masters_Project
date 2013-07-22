@@ -1,10 +1,39 @@
+% Filter Bank Class.
+%
+%
+% Fields,
+%
+%Private,
+%       R: Width of Kernel in pixels. The size of the matrix which holds
+%       the filter.
+%       C: Height of Kernel in pixels. The size of the matrix which holds
+%       the filter.
+%       Kmax: Maximum frequency of filter bank.
+%       f: Frequency spacing.
+%       Delt: Width of Gaussian window.
+%       
+%Methods,
+%
+%Public, 
+%
+%       FilterBank(): Constructor. Carries out certain preliminary
+%       calculations and creates actual filter bank using call
+
 classdef  FilterBank < handle
     
     properties( Access =  private)
         R = 128;
         C = 128;
-        Kmax = pi / 2;
-        f = sqrt( 2 );
+        Wiscott
+                Kmax =pi/2;
+                f = sqrt(2);
+        
+        % Jan
+        %         Kmax = 0.5;
+        %         f = 2;
+        
+   
+        
         Delt = 2 * pi;
         Delt2;
         GW;
@@ -42,7 +71,7 @@ classdef  FilterBank < handle
             for i = 1:size(this.GW,3)
                 currentFilter = this.getFilter(i);
                 response(i,:,:) = convolve2(imageIn,currentFilter,'same');
-           
+                
                 
             end
             

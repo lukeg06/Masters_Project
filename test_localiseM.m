@@ -45,3 +45,5 @@ for imNo = 1:noImages
     fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
      fprintf(m_LocationFileID,'%f\t%f\n',m(1),m(2));
 end
+
+fclose(m_LocationFileID);

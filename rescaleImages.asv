@@ -1,6 +1,5 @@
 % Resize all images
 
-
 %Define paths etc
 DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';
  outputPath= 'C:\Databases\Texas3DFR\Resized_PreprocessedImages\';

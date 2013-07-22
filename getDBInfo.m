@@ -1,4 +1,3 @@
-
 % [imageList,noImages]= getDBInfo(DBpath,imageType)
 %
 %Input,

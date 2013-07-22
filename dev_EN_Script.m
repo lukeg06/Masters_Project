@@ -1,4 +1,4 @@
-%Script to develop en detection
+%Script to develop en localisation
 close all;
 clear all;
 

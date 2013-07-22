@@ -59,10 +59,6 @@ windowSize = windowSizeTotal./2;
 imageMaskedFinal = zeros(size(imageIn));
 image1 = imageIn;
 centerPoint = round(mm2pixel(maxLocation./3)); % round before to keep matlab happy
-% imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-%     = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
 
 %% Load
 

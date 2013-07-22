@@ -25,6 +25,7 @@
 
 function [out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
 
+% Load data.
 DBpath = 'C:\Databases\Texas3DFR\GaborResponses\';
 [dbList,noImages]= getDBInfo(DBpath,'jet');
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_jet.txt');
@@ -32,9 +33,12 @@ imageList = importdata('C:\Databases\Texas3DFR\Partitions\Example_Images_jet.txt
 similarityScores = zeros(noImages,size(jetsIn,2));
 actualJets = zeros(size(jetsIn,1),noImages);
 for i = 1:noImages
+    
+    %Import example image jets. These have been calculated offline and are
+    %loaded here.
     subject = importdata(strcat(DBpath,imageList{i}));
     
-    
+    %Switch based on which landmark is to be used.
     switch lower(landmark)
         case 'en left'
             landmarkJets = subject.EN.left;
@@ -52,7 +56,7 @@ for i = 1:noImages
             error('Incorrect Landmark');
     end
     
-    
+    % EBGM method to be used.
     switch matchType
         case '3D'
             actualJet = landmarkJets.val3D;
@@ -65,14 +69,18 @@ for i = 1:noImages
             error('Incorrect MatchType');            
     end
     
+    % Place all 89 example jets in single matrix. For efficiency.
     actualJets(:,i) = actualJet;
 end
 
+% Efficiency improvement. Reduces number of calls to abs() and angle().
 landmarkJets.abs_val = abs(actualJets);
 landmarkJets.angle_val = angle(actualJets);
 clear actualJets;
+
+% Calculate similarity score for each jetIn. Number of calls =
+% size(jetsIn,2)
 for j = 1:size(jetsIn,2)
-    
     
     similarityScores(:,j) = similarityScore2(jetsIn(:,j),landmarkJets);
     
@@ -80,11 +88,13 @@ end
 
 
 
-% Find max similarity score;
+% Find max similarity score and subscript value of that index.
 [maxVal maxInd] = max(similarityScores(:));
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
+
+
 % error('yo')
 % for j = 20
 %     for i = 1:(21*21)
@@ -99,19 +109,17 @@ out.score = maxVal;
 end
 
 
-
+% Magnitude similarity score. Not used. See Wiscott, 1999.
 function [score] = similarityScore(testJet,landmarkJets)
 
 
 
 
-%Compare magnitudes.
+%Vectorisation
  j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
 j1_abs = abs(j1);
 j2_abs = landmarkJets.abs_val;
 
-j1_angle = angle(j1);
-j2_angle = landmarkJets.angle_val;
 
 score = sum(j1_abs.*j2_abs)./  sqrt(sum(j1_abs.^2).*sum(j2_abs.^2));
 
@@ -119,13 +127,13 @@ score = sum(j1_abs.*j2_abs)./  sqrt(sum(j1_abs.^2).*sum(j2_abs.^2));
 
 end
 
+%Phase sensitive similarity score. See Wiscott, 1999.
 function [score] = similarityScore2(testJet,landmarkJets)
 
 
 
-
-%Compare magnitudes.
- j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
+%Vectorisation. Halves processing time. 
+j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
 j1_abs = abs(j1);
 j2_abs = landmarkJets.abs_val;
 

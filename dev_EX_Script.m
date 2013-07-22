@@ -1,4 +1,4 @@
-% Calculate m' point
+
 
 %load en locations
 filename = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_Results\EN_left_Locations.txt';

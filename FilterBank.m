@@ -1,3 +1,36 @@
+% Filter Bank Class.
+%
+%
+% Fields,
+%
+%Private,
+%       R: Width of Kernel in pixels. The size of the matrix which holds
+%       the filter.
+%       C: Height of Kernel in pixels. The size of the matrix which holds
+%       the filter.
+%       Kmax: Maximum frequency of filter bank.
+%       f: Frequency spacing.
+%       Delt: Width of Gaussian window.
+%       
+%Methods,
+%
+%Public, 
+%
+%       FilterBank(): Constructor. Carries out certain preliminary
+%       calculations and creates actual filter bank using call to
+%       generateFilterBank. Handle 'this' is used. This is to keep in line with Java. 
+%       
+%       filterOut = getFilter(j): Return filter j.
+%   
+%       response = filterImage(imageIn): Filter imageIn using each filter
+%       in the bank.
+%       
+%Private
+%       generateFilterBank(): Creates and saves Gabor filters. Calls the
+%       GaborWavelet function.
+%
+%
+%
 classdef  FilterBank < handle
     
     properties( Access =  private)

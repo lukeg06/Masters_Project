@@ -1,4 +1,4 @@
-%Script to develop ch
+%Script to develop ch. Used for determining which sigma value to use.
 close all;
 clear all;
 
