@@ -8,7 +8,7 @@
 % computed (if you want the gradient of each band, call this function three
 % times).
 
-% This function is provided by Carlo Tomasi tomasi@cs.duke.edu.
+% This function is provided by and with permission of Carlo Tomasi tomasi@cs.duke.edu.
 
 function [gr, gc] = gradient2(img, sigma)
 

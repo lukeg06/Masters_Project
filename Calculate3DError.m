@@ -1,6 +1,10 @@
-% Calculate 3D error. Take Z value to the value at the detected xy
-% coordinates. Since the coordinates of the feature area in double format
-% rounding is used on the coordinate. MM values are used in all cases.
+% Script to calculate 3D error errors. Requires user interaction. This is
+% done to avoid error due to paths/filenames not being change which could
+% cause errors. Prompts user for location file and output filename.
+% Landmark index correspondes to the coordinates used in the Texas 3DFR DB.
+% The script then calculates 3D error. Take Z value at the value at the detected xy
+% coordinates. Since the coordinates of the feature area is in double format
+% rounding is used on the coordinate. mm values are used in all cases.
 
 clear all;
 close all;

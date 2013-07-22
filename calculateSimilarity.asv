@@ -1,14 +1,26 @@
+% Function to calculate similarity between Gabor jets from a particular
+% region and the jets of a particular landmark. These jets are based on 89
+% training images from the Texas 3DFR DB.
+%
+%[out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
+
+%Inputs,
+%       jetsIn: Matrix which contrained the jets for each pixel in a given
+%       region. size = [noGaborCoefficients,noJets]
+%       
+%       landmark: String which specifies which landmark jets should be
+%       compared to. String of format 'landmarkAbrv right/left'. E.g. 'ch left'
+%
+%       matchType: String which specifies which EBGM search should be
+%       used. 2D/3D/2D+3D.
+%       
+%Outputs,
+%       out: Output object.
+%
+%       out.index = 
+
+
 function [out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
-
-
-%% TEMP DESCRIPTION !!!!!!
-%function to calculate the similarity score for a region. Takes in a number
-%of jets and calculates the similarity for each of them. It then selects
-%the most similar in returns its index. In this way the location of the
-%jet most similar to the landmark in question can be determined. This is
-%based on the method given in the paper. I am using the similarity score
-%which only examines the magnitude response. If that doesnt work out then I
-%will use the phase one. Though this looks a little more difficult.
 
 DBpath = 'C:\Databases\Texas3DFR\GaborResponses\';
 [dbList,noImages]= getDBInfo(DBpath,'jet');
@@ -70,42 +82,39 @@ end
 [i1,j1] = ind2sub(size(similarityScores),maxInd);
 out.index = j1;
 out.score = maxVal;
-error('yo')
-for j = 17
-    for i = 1:(21*21)
-        l = temp(i,:);
-        imageSim(l(1),l(2)) = similarityScores(j,i);
-    end
-    imagesc(imageSim)
-    pause;
-end
+% error('yo')
+% for j = 20
+%     for i = 1:(21*21)
+%         l = temp(i,:);
+%         imageSim(l(1),l(2)) = similarityScores(j,i);
+%     end
+%     imagesc(imageSim)
+%     pause;
+% end
 
 
 end
 
 
-function [score] = similarityScore(testJet,landmarkJets,matchType)
 
-switch matchType
-    case '3D'
-        actualJet = landmarkJets.val3D;
-    case '2D'
-        actualJet = landmarkJets.val2D;
-        
-    case '2D + 3D'
-        %to do
-        
-        actualJet = [landmarkJets.val2D;landmarkJets.val3D];
-    otherwise
-        error('Incorrect MatchType');
-end
+function [score] = similarityScore(testJet,landmarkJets)
+
+
+
+
 %Compare magnitudes.
-j1 = abs(testJet);
-j2 = abs(actualJet);
-score = sum(j1.*j2)./ sqrt(sum(j1.^2).*sum(j2.^2));
+ j1 = repmat(testJet,1,size(landmarkJets.abs_val,2));
+j1_abs = abs(j1);
+j2_abs = landmarkJets.abs_val;
+
+j1_angle = angle(j1);
+j2_angle = landmarkJets.angle_val;
+
+score = sum(j1_abs.*j2_abs)./  sqrt(sum(j1_abs.^2).*sum(j2_abs.^2));
+
+
 
 end
-
 
 function [score] = similarityScore2(testJet,landmarkJets)
 

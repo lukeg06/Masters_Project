@@ -1,14 +1,29 @@
+% Function to calculate similarity between Gabor jets from a particular
+% region and the jets of a particular landmark. These jets are based on 89
+% training images from the Texas 3DFR DB.
+%
+%[out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
+%
+%Inputs,
+%       jetsIn: Matrix which contrained the jets for each pixel in a given
+%       region. size = [noGaborCoefficients,noJets]
+%       
+%       landmark: String which specifies which landmark jets should be
+%       compared to. String of format 'landmarkAbrv right/left'. E.g. 'ch left'
+%
+%       matchType: String which specifies which EBGM search should be
+%       used. 2D/3D/2D+3D.
+%       
+%Outputs,
+%       out: Output object.
+%
+%       out.index: Index of maximum similarity. Coordinates within search
+%       region of max score.
+%
+%       out.score: Actual similarity score. Range from -1 to 1. 
+
+
 function [out] = calculateSimilarity(jetsIn,landmark,matchType,temp)
-
-
-%% TEMP DESCRIPTION !!!!!!
-%function to calculate the similarity score for a region. Takes in a number
-%of jets and calculates the similarity for each of them. It then selects
-%the most similar in returns its index. In this way the location of the
-%jet most similar to the landmark in question can be determined. This is
-%based on the method given in the paper. I am using the similarity score
-%which only examines the magnitude response. If that doesnt work out then I
-%will use the phase one. Though this looks a little more difficult.
 
 DBpath = 'C:\Databases\Texas3DFR\GaborResponses\';
 [dbList,noImages]= getDBInfo(DBpath,'jet');

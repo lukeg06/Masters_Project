@@ -1,5 +1,3 @@
-function [coordinates_out] = contour2xy2(contourImage,reverse)
-
 % This function funtion takes an image with a single contour in the image
 % as the input and return the coordinates of each pixel in the contour. The
 % algrothim follows the pixels from the start point to the end point of the
@@ -16,6 +14,7 @@ function [coordinates_out] = contour2xy2(contourImage,reverse)
 %       coordinates_out =  x and y coordinate (in pixel value) of the contour.
 %       In the form [y(:),x(:)].
 %
+function [coordinates_out] = contour2xy2(contourImage,reverse)
 
 if exist('reverse','var')
     if ~or(strcmp(reverse,'true'),strcmp(reverse,'false'))

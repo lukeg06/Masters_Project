@@ -1,6 +1,3 @@
-function [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,displayImage)
-addpath('C:\VSG_IPA_toolbox\')
-
 % This function is used to detect the precise location of the pronasale (PRN).
 % An nose tip estimate is provided which is based on the location of a
 % template nose tip which was use for ICP registration. This point is used
@@ -19,6 +16,11 @@ addpath('C:\VSG_IPA_toolbox\')
 %Outputs,
 %       prnLocation: Location of the PRN in mm. 
 %
+
+
+function [PRNLocation] = localisePRN(imageIn,estimatedLocation,sigma,displayImage)
+addpath('C:\VSG_IPA_toolbox\')
+
 
 
 

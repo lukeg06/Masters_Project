@@ -1,4 +1,4 @@
-% Function which returns the mean (h) and gaussian (k) curvature of the image.
+% function which returns the mean (h) and gaussian (k) curvature of the image.
 %
 %function [H, K] =  curvature(imageIn,sigma)
 %

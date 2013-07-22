@@ -1,5 +1,3 @@
-
-function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction,reverse)
 % This function is used to detect the precise location of the left and
 % right Alares. It uses a LOG edge detector to isolate the nose contour.
 % This contour is then examined in order to detect points of high positive
@@ -34,6 +32,8 @@ function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma
 %       detection of one of the points. [0 0] = no error. [0 1] = right
 %       error. [1 0] = left error.
 %
+
+function [Output] = localiseAL3_widest(imageIn,PRNLocation,windowSizeTotal,sigma,displayImage,direction,reverse)
 
 addpath('./toolboxes/chaincode/')
 
