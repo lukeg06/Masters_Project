@@ -38,7 +38,7 @@ savefilename1 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Pro
 FileID = fopen(savefilename1,'w');
 
 fprintf(FileID,'sigma\tupper_lip_error\tlower_lip_error\n');
-for sigma = 1:30
+for sigma = 10
     upper_lip_error = 0;
 lower_lip_error = 0;
 for imNo = 1:noImages

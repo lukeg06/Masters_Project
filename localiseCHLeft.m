@@ -7,7 +7,7 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     %% Detect curvature
 
     
-    sigma = 11;
+    sigma = 10;
     [~, K] =  curvature(imageIn,sigma);
     
     K_eliptical = bsxfun(@max,zeros(size(K)),K);
