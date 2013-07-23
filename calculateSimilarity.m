@@ -51,7 +51,7 @@ for i = 1:noImages
         case 'ch left'
             landmarkJets = subject.CH.left;
         case 'ch right'
-            landmarkJets = subject.CH.left;
+            landmarkJets = subject.CH.right;
         otherwise
             error('Incorrect Landmark');
     end

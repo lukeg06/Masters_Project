@@ -40,7 +40,7 @@ FileID = fopen(savefilename1,'w');
 fprintf(FileID,'sigma\tupper_lip_error\tlower_lip_error\n');
 sigma = 11;
 for sigma2 = 10:25
-    for imNo = 1:10
+    for imNo = 1:100
         imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
         imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
         
@@ -57,7 +57,7 @@ for sigma2 = 10:25
         
         [~, K] =  curvature(imageIn,sigma);
         [H, ~] =  curvature(imageIn,sigma2);
-        K_eliptical = bsxfun(@max,zeros(size(K)),K);
+        K_eliptical = bsxfun(@max,zeros(size(K)),0K);
         K_eliptical(mm2pixel(prncoordinates(imNo,2)):end,mm2pixel(prncoordinates(imNo,1)));
         
         [val ind] = findpeaks(K_eliptical(mm2pixel(prncoordinates(imNo,2)):end,mm2pixel(prncoordinates(imNo,1))));

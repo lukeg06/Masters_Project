@@ -6,12 +6,12 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
     %% Detect curvature
 
     
-    sigma = 11;
+    sigma = 10;
     [~, K] =  curvature(imageIn,sigma);
     
     K_eliptical = bsxfun(@max,zeros(size(K)),K);
 
-    K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
+
     
     [val ind] = findpeaks(K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
     
@@ -22,7 +22,7 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
     
     H_Masked_right = zeros(size(imageIn));
     H_Masked_right((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)))...
-        = H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
+        = 1+ H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
 
     %%
     %Find location of global maximum

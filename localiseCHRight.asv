@@ -1,5 +1,4 @@
-function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
-
+function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
 
     leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
     rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
@@ -7,25 +6,27 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     %% Detect curvature
 
     
-    sigma = 10;
+    sigma = 11;
     [~, K] =  curvature(imageIn,sigma);
     
     K_eliptical = bsxfun(@max,zeros(size(K)),K);
-    K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
+
+
     
     [val ind] = findpeaks(K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
-    sigma2 = 15;
-     [H, ~] =  curvature(imageIn,sigma2);
+    
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(3)) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(2)) );
-    %%
-    H_Masked_left = zeros(size(imageIn));
-     H_Masked_left((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))))...
-        =1+ H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))));
+   sigma2 = 15;
+    [H, ~] =  curvature(imageIn,sigma2);
     
+    H_Masked_right = zeros(size(imageIn));
+    H_Masked_right((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)))...
+        = H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
+
     %%
     %Find location of global maximum
-    imageMasked = H_Masked_left;
+    imageMasked = H_Masked_right;
     [val ind]= max(imageMasked(:));
     [i,j] = ind2sub(size(imageMasked),ind);
     %% Isolate all pixels with maximum value
@@ -62,9 +63,6 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     
     %%
     k = 0;
-    % jets[40,noPixels]
-    
-    
     
     jetIndex =zeros(size(responseMaskedRegion3D,2)*size(responseMaskedRegion3D,3),2);
     switch method
@@ -103,7 +101,7 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     
     % Identify the search region. Each pixel from this is then extracted
     
-    [outCalculateSimilarity] =  calculateSimilarity(jets,'CH Left',method,jetIndex);
+    [outCalculateSimilarity] =  calculateSimilarity(jets,'CH Right',method,jetIndex);
     c = jetIndex(outCalculateSimilarity.index,:);
     
     a = zeros(size(imageIn));
@@ -116,4 +114,4 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     [~,p] = max(a(:));
     [c1(2),c1(1)] = ind2sub(size(a),p);
     
-    output.ChLeftLocation = pixel2mm(c1.*3);
+    output.ChRightLocation = pixel2mm(c1.*3);

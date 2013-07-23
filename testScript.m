@@ -1,24 +1,27 @@
+errorLogfilePath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\ERROR.log.txt';
+
 try
-      fprintf('Processing test_localiseEX_Right(3D)\n')
- test_localiseEX_Right('3D');
+      fprintf('Processing test_localiseCH_Left(2D3D)\n')
+ test_localiseCH_Left('2D + 3D');
 catch exception
-    logError('EX Right 3D',exception,errorLogfilePath)
+    logError('CH Left 2D + 3D',exception,errorLogfilePath)
     
 end
 
 try
-    fprintf('Processing test_localiseEN_Right(3D)\n')
- test_localiseEN_Right('3D');
+      fprintf('Processing test_localiseCH_Left(3D)\n')
+ test_localiseCH_Left('3D');
 catch exception
-    logError('EN Right 3D',exception,errorLogfilePath)
+    logError('CH Left 3D',exception,errorLogfilePath)
     
 end
-
-
 try
-    fprintf('test_localiseCH_Left_sigma2\n')
- test_localiseCH_Left_sigma2;
+      fprintf('Processing test_localiseCH_Left(2D)\n')
+ test_localiseCH_Left('2D');
 catch exception
-    logError('test_localiseCH_Left_sigma2',exception,errorLogfilePath)
+    logError('CH Left 2D',exception,errorLogfilePath)
     
 end
+
+
+
