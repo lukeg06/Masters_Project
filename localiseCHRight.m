@@ -22,7 +22,7 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
     
     H_Masked_right = zeros(size(imageIn));
     H_Masked_right((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)))...
-        = 1+ H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
+        = (1+min(H(:)))+ H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
 
     %%
     %Find location of global maximum

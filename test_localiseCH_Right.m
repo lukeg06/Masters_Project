@@ -29,8 +29,8 @@ noImages = size(imageList,1);
 
 % Define savefile paths
 %open files for writing results
-savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\CH_left_Locations_',method,'.txt');
-savefilename2 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseCHLeftResults_',method,'.txt');
+savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\CH_right_Locations_',method,'.txt');
+savefilename2 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseCHrightResults_',method,'.txt');
 
 ch_Right_LocationFileID = fopen(savefilename1,'w');
 test_localiseCHRightResultsFileID = fopen(savefilename2,'w');
@@ -42,7 +42,7 @@ fprintf(test_localiseCHRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Er
 
 %%
 
-for imNo =132
+for imNo =1058
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));

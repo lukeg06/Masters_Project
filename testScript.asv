@@ -1,33 +1,27 @@
-% Script to run en calc;
-close all
-clear all
-
-% % Test EN localisations. Should takes 24hrs.
-% try
-%  test_localiseEN_Left('2D')
-% catch exception
-%     fprintf('Error left \n')
-%     
-% end
-% 
-% try
-%  test_localiseEN_Left('3D')
-% catch exception
-%     fprintf('Error left \n')
-%     
-% end
-
+oerrorLogfilePath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\ERROR.log.txt';
 
 try
- test_localiseEN_Right('3D');
+      fprintf('Processing test_localiseCH_Left(2D3D)\n')
+ test_localiseCH_Left('2D + 3D');
 catch exception
-    fprintf('Error right\n')
+    logError('CH Left 2D + 3D',exception,errorLogfilePath)
     
 end
 
 try
- dev_CH_Script;
+      fprintf('Processing test_localiseCH_Left(3D)\n')
+ test_localiseCH_Left('3D');
 catch exception
-    
+    logError('CH Left 3D',exception,errorLogfilePath)
     
 end
+try
+      fprintf('Processing test_localiseCH_Left(2D)\n')
+ test_localiseCH_Left('2D');
+catch exception
+    logError('CH Left 2D',exception,errorLogfilePath)
+    
+end
+
+
+
