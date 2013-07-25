@@ -1,6 +1,6 @@
 %Script to localise left EN.
 
-function test_localiseCH_Left(method)
+function test_localiseCH_Left_sigma(method)
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
 %Define paths etc
@@ -27,37 +27,35 @@ AL_RightCoordinates = A ;clear A;
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
-% Define savefile paths
-%open files for writing results
-savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\CH_left_Locations_',method,'.txt');
-savefilename2 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseCHLeftResults_',method,'.txt');
 
-ch_Left_LocationFileID = fopen(savefilename1,'w');
-test_localiseCHLeftResultsFileID = fopen(savefilename2,'w');
 
-fprintf(test_localiseCHLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
+savefilename1 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\localise_CH_Sigma.txt');
 
+FileID = fopen(savefilename1,'w');
+
+fprintf(FileID,'sigma\tupper_lip_error\tlower_lip_error\n');
 
 
 
 %%
-
-for imNo = 729
+for sigma2 = 1:15
+for imNo = 1:140
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
-    [Output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);
+    [Output] = localiseCHLeftSigma(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method,sigma2);
     
     ind_Img = strmatch(imageList{imNo},dbList);
     ch_loc = Output.ChLeftLocation;
-    x_error = abs(ch_loc(1) - landmarkLocations(15,1,ind_Img));
-    y_error = abs(ch_loc(2) - landmarkLocations(15,2,ind_Img));
-    euclidean_error = norm(ch_loc - landmarkLocations(15,:,ind_Img));
+    x_error(imNO) = abs(ch_loc(1) - landmarkLocations(15,1,ind_Img));
+    y_error(imNO) = abs(ch_loc(2) - landmarkLocations(15,2,ind_Img));
+    euclidean_error(imNO) = norm(ch_loc - landmarkLocations(15,:,ind_Img));
     
-    fprintf(test_localiseCHLeftResultsFileID,'%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
-    fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
-    fprintf(ch_Left_LocationFileID,'%f\t%f\n',ch_loc(1),ch_loc(2));
-end
 
+end
+ results = [mean(x_error),std(x_error),mean(y_error),std(y_error),mean(euclidean_error),std(euclidean_error)];
+   
+ fprintf(FileID,'%d\t%f\t%f\t%f\t%f\t%f\t%f\n',sigma2,results);
+end
 fclose(ch_Left_LocationFileID);
 fclose(test_localiseCHLeftResultsFileID);
