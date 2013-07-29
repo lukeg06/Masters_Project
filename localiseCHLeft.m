@@ -13,8 +13,8 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
     K_eliptical = bsxfun(@max,zeros(size(K)),K);
     K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
     
-    [val ind] = findpeaks(K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
-    sigma2 = 15;
+    [val ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
+    sigma2 = 8;
      [H, ~] =  curvature(imageIn,sigma2);
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(3)) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(2)) );

@@ -13,11 +13,11 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
 
 
     
-    [val ind] = findpeaks(K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
+    [val ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
     
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(3)) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(2)) );
-   sigma2 = 15;
+   sigma2 = 8;
     [H, ~] =  curvature(imageIn,sigma2);
     
     H_Masked_right = ones(size(imageIn)).*min(H(:));;
