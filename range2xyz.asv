@@ -10,6 +10,6 @@ function [xyz] = range2xyz(im)
 
 % In the Z direction a value of 255 is taken as 0 mm. Use imcomplement to
 % revervse image.
-%im  = imcomplement(im);
+im  = imcompl
 
 xyz = [x(:).*0.32, y(:).*0.32, (im(:).*255).*0.32];
