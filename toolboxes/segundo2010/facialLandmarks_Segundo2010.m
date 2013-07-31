@@ -149,11 +149,17 @@ for jY = 1 : size( Z, 1 )
 end
 
 max_to_med = ( maxY - medY );
-
+ 
 % ----- /////////////////////////////////////////////////////// -------
 % ----- THIS PART IS AN AD-HOC ADDITION TO HANDLE THE FACT THAT -------
 % ----- WE DON'T REALLY HAVE A DETECTION STEP AND THE UPPER AND -------
 % ----- LOWER PARTS OF THE FACE GENERATE STRONG FALSE PEAKS -----------
+
+%LUKE GAHAN EDIT - Need to modify because in this dataset the forehead
+%sometimes runs over the top of the image.
+if medY(1) ~= 0;
+   medY(1) = 0; 
+end
 
 % Discard the region that is too close to the borders
 not_face = find( medY <= 0 );

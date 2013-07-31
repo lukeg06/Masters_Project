@@ -1,6 +1,8 @@
 %Segundo localise prn.
 
 
+close all;clear all;
+
 %Define paths etc
 addpath('.\toolboxes\segundo2010');
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
@@ -20,11 +22,23 @@ test_localisePRNResultsFileID = fopen('C:\Documents and Settings\Luke\My Documen
 fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(mm)\n');
 
 
-for imNo =1
+for imNo =1:noImages
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
-    imageInXYZ = range2xyz(imageIn);
-    x = repmat(imageInXYZ(:,1),1,size(imageInXYZ(:,1)));
-    rangeLmks = facialLandmarks_Segundo2010 (imageInXYZ(:,1), imageInXYZ(:,2), imageIn, 'nofilter');
-    
+  [x,y,z] = range2xyz(imageIn);
+
+%     
+% x =   repmat(x,1,size(x,1));
+% y =   repmat(y,1,size(y,1));
+% z =   repmat(z,1,size(z,1));
+   rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.03,0.015);
+   % rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.003,0.003);
+    PRNLocation = [rangeLmks.landmarks3D(1),rangeLmks.landmarks3D(2)];
+   ind = strmatch(imageList{imNo},dbList);
+  %Calute error & print to file
+   y_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
+   x_error = abs(PRNLocation(1) - landmarkLocations(19,1,ind));
+   euclidean_error = norm(PRNLocation - landmarkLocations(19,:,ind));
+    fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
+    fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
 end

@@ -149,11 +149,15 @@ for jY = 1 : size( Z, 1 )
 end
 
 max_to_med = ( maxY - medY );
-
+ 
 % ----- /////////////////////////////////////////////////////// -------
 % ----- THIS PART IS AN AD-HOC ADDITION TO HANDLE THE FACT THAT -------
 % ----- WE DON'T REALLY HAVE A DETECTION STEP AND THE UPPER AND -------
 % ----- LOWER PARTS OF THE FACE GENERATE STRONG FALSE PEAKS -----------
+
+%LUKE GAHAN EDIT - Need to modify because in this dataset the forehead
+%sometimes runs over the top of the image.
+
 
 % Discard the region that is too close to the borders
 not_face = find( medY <= 0 );
@@ -236,7 +240,7 @@ fprintf(1, '\n');
 % eyes detected elseware up)
 
 fprintf(1, '\tCurvature computation ');
-[H, K] = rangeCurvature_biQuadric( X, Y, Z, 5, 5);
+[H, K] = rangeCurvature_biQuadric( X, Y, Z, 5, 5);  
 K = -K; % The signs of K in the paper are wrong!
         % so we set it wrong and do as they say
 

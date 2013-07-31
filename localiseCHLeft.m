@@ -21,6 +21,10 @@ function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoord
    
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(2))) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(indLips(1))) );
+   
+      sigma2 = 8;
+    [H, ~] =  curvature(imageIn,sigma2);
+    
     %%
     H_Masked_left = ones(size(imageIn)).*min(H(:));
      H_Masked_left((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))))...

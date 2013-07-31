@@ -4,12 +4,34 @@
 %the secne
 %xyz =  (m*n)*3 matrix where m*n is the number of pixels in the range image
 
-function [xyz] = range2xyz(im)
+function [x y z] = range2xyz(im)
 
-[y,x] = ind2sub(size(im), 1:numel(im));
 
-% In the Z direction a value of 255 is taken as 0 mm. Use imcomplement to
-% revervse image.
-im  = imcompl
+% 
+% % In the Z direction a value of 255 is taken as 0 mm. Use imcomplement to
+% % revervse image.
+% %im  = imcomplement(im);
+% x = zeros(size(im));
+% y = zeros(size(im));
+% z = im.*32;
+% for k = 1:numel(im)
+%     [i,j] = ind2sub(size(im),k);
+%     x(i,j) = i.*0.32;
+%     y(i,j) = j.*0.32;
+% end
 
-xyz = [x(:).*0.32, y(:).*0.32, (im(:).*255).*0.32];
+
+
+% 
+%  % According to the indications in the database paper, the resolution of
+% 
+%  % the grid is 0.32mm for all 3 axes
+% 
+% x = repmat( .32 : .32 : .32 * size(z, 2), [size(z,1), 1] );
+% 
+% y = repmat( (.32 * size(z, 1) : -.32 : .32)', [1, size(z,2)] );
+% 
+% % Then pass to the function as (not 100% sure about the Z-scaling, better
+% % check it):
+
+z =  0.32 .* double( im )
