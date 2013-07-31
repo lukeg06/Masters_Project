@@ -31,9 +31,13 @@ for imNo =1:noImages
 % x =   repmat(x,1,size(x,1));
 % y =   repmat(y,1,size(y,1));
 % z =   repmat(z,1,size(z,1));
-   rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.03,0.015);
-   % rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.003,0.003);
-    PRNLocation = [rangeLmks.landmarks3D(1),rangeLmks.landmarks3D(2)];
+
+%rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.03,0.015,'xNose_rows',16);
+  rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.003,0.003/10,'xNose_rows',16);
+ %rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'kh_thresholds',0.00000003,0.00000003);
+ %     rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'kh_thresholds',0.04,0.0003,'xNose_rows',16);
+     % rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'xNose_rows',16);
+    PRNLocation = pixel2mm([rangeLmks.landmarks2D_YX(1,2),rangeLmks.landmarks2D_YX(1,1)]);
    ind = strmatch(imageList{imNo},dbList);
   %Calute error & print to file
    y_error = abs(PRNLocation(2) - landmarkLocations(19,2,ind));
@@ -42,3 +46,4 @@ for imNo =1:noImages
     fprintf('%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
     fprintf(test_localisePRNResultsFileID,'%d\t%f\t%f\t%f\n',imNo,x_error,y_error,euclidean_error);
 end
+

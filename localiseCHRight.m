@@ -6,7 +6,7 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
     %% Detect curvature
 
     
-    sigma = 10;
+    sigma = 11;
     [~, K] =  curvature(imageIn,sigma);
     
     K_eliptical = bsxfun(@max,zeros(size(K)),K);
@@ -24,7 +24,7 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
    sigma2 = 8;
     [H, ~] =  curvature(imageIn,sigma2);
     
-    H_Masked_right = ones(size(imageIn)).*min(H(:));;
+    H_Masked_right = ones(size(imageIn)).*min(H(:));
     H_Masked_right((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)))...
         = H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));
 

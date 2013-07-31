@@ -171,11 +171,15 @@ chin_lim = not_face( find( d_not_face > 1, 1, 'last' ) + 1 );
 % criterion to discard anything within 1/6 of the face extent from the
 % borders
 face_extent = abs( chin_lim - forehead_lim );
-max_to_med( 1 : forehead_lim + round( face_extent / 6 )) = 0;
-max_to_med( chin_lim - round( face_extent / 6 ) : end) = 0;
+max_to_med( 1 : forehead_lim + round( face_extent / 4 )) = 0;
+max_to_med( chin_lim - round( face_extent / 4 ) : end) = 0;
 
 % ----- /////////////////////////////////////////////////////// -------
-
+% figure,plot(maxY)
+% hold on 
+% plot(medY,'m')
+% plot(max_to_med,'g')
+% hold off
 
 % Get max difference 
 [nada, y_maxDiff] = max( max_to_med );
@@ -242,12 +246,14 @@ fprintf(1, '\n');
 % eyes detected elseware up)
 
 fprintf(1, '\tCurvature computation ');
-[H, K] = rangeCurvature_biQuadric( X, Y, Z, 5, 5);  
+[H, K] = rangeCurvature_biQuadric( X, Y, Z, 10, 10); 
+% [H,~] = curvature(Z,3);
+% [~,K] = curvature(Z,3);
 K = -K; % The signs of K in the paper are wrong!
         % so we set it wrong and do as they say
 
 % If H,K thresholds not set, perform automatic computation
-fprintf(1, '\tPit-points Y-projection');
+fprintf(1, '\tPit-points Y-projection');  
 if thresh_H * thresh_K == 0
     fprintf(', k = %4d', 0);
     % clf; colorV = ['mbcgyrk'];
@@ -417,7 +423,8 @@ if thresh_H * thresh_K == 0
             acc_peakX = acc_peakX + filt_peakX(9 : end - 8);
         end
 
-        % plot( acc_peakX );
+         plot( acc_peakX );
+         pause;
     end
 else
     peakX = sum(...
