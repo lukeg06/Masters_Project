@@ -1,2 +1,1 @@
 No.	X Error(mm)	Y Error(mm)	Euc Error(mm)
-37	50.267613	3.390864	50.381850

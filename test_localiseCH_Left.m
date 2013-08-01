@@ -46,8 +46,7 @@ fprintf(test_localiseCHLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Err
 
 %%
 
-for imNo = [1058]
-    
+for imNo = 1:noImages
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
     [Output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);

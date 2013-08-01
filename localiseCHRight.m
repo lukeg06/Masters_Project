@@ -14,15 +14,15 @@ K_eliptical = bsxfun(@max,zeros(size(K)),K);
 K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 
 %Find first trough
-[valT ind1] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1);
+[ind1] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1, 6 )';
 
-[valP ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
-
+[ind] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))), 6 )';
+a= K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
+valP = a(ind);
 
 indSubPrn = find(ind>ind1(1));
-[valChin indChin] = max(valP(indSubPrn));
-
-indLips = indSubPrn(indSubPrn<=indSubPrn(indChin));
+%[valChin indChin] = max(valP(indSubPrn));
+indLips = indSubPrn(indSubPrn<=indSubPrn(end));
 
 
 if size(indLips,2)<3
@@ -32,7 +32,7 @@ if size(indLips,2)<3
     % the trough after the nose and the one before the chin as the limits.
  
     
-    ind_chinTrough = find(ind1<ind(indLips(indChin)),1,'last');
+    ind_chinTrough = find(ind1<ind(indLips(end)),1,'last');
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind1(ind_chinTrough)) ;
     %trough after nose
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind1(1)) );
@@ -41,7 +41,7 @@ else
     
 %    [svals sind] = sort(valP(indLips),'descend');
 %    indLipsSorted = indLips(sind);
-    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(end-1))) ;
+    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(2))) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(indLips(1))) );
 end
     sigma2 = 2;
