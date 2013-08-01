@@ -22,7 +22,7 @@ test_localisePRNResultsFileID = fopen('C:\Documents and Settings\Luke\My Documen
 fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(mm)\n');
 
 
-for imNo =1:noImages
+for imNo =37
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
   [x,y,z] = range2xyz(imageIn);

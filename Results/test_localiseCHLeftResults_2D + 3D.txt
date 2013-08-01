@@ -1,2 +1,1 @@
 No.	X Error(mm)	Y Error(mm)	Rad Error(mm)
-273	0.128326	0.194112	0.232695

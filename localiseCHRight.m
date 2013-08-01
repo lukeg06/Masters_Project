@@ -3,6 +3,7 @@ function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoor
 leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 
+
 %% Detect curvature
 
 
@@ -10,26 +11,43 @@ sigma = 11;
 [~, K] =  curvature(imageIn,sigma);
 
 K_eliptical = bsxfun(@max,zeros(size(K)),K);
-
-
+K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 
 %Find first trough
-[val1 ind1] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1);
+[valT ind1] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1);
 
-[val ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
+[valP ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
 
-indLips = find(ind>ind1(1),2,'first');
-if size(indLips<3)
-    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(1))) ;
+
+indSubPrn = find(ind>ind1(1));
+[valChin indChin] = max(valP(indSubPrn));
+
+indLips = indSubPrn(indSubPrn<=indSubPrn(indChin));
+
+
+if size(indLips,2)<3
+    
+    % Expecting at least three peaks. The upper and lower lip and the chin.
+    % Sometimes one or other of the lips isnt detected. In the case we take
+    % the trough after the nose and the one before the chin as the limits.
+ 
+    
+    ind_chinTrough = find(ind1<ind(indLips(indChin)),1,'last');
+    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind1(ind_chinTrough)) ;
+    %trough after nose
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind1(1)) );
 else
-    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(2))) ;
+    %Take two largest valid peaks as max.
+    
+%    [svals sind] = sort(valP(indLips),'descend');
+%    indLipsSorted = indLips(sind);
+    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(end-1))) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(indLips(1))) );
 end
-
-sigma2 = 8;
-[H, ~] =  curvature(imageIn,sigma2);
-
+    sigma2 = 2;
+    [H, ~] =  curvature(imageIn,sigma2);
+    
+%%
 H_Masked_right = ones(size(imageIn)).*min(H(:));
 H_Masked_right((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)))...
     = H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(AL_RightCoordinates( 1)):mm2pixel(rightLimit_x)));

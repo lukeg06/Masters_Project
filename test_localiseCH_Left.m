@@ -1,6 +1,10 @@
 %Script to localise left EN.
 
 function test_localiseCH_Left(method)
+
+if ~exist('method','var')
+   method = '2D + 3D' ;
+end
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
 %Define paths etc
@@ -42,7 +46,7 @@ fprintf(test_localiseCHLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Err
 
 %%
 
-for imNo = 1:noImages
+for imNo = [1058]
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
