@@ -19,6 +19,15 @@ catch exception
     
 end
 
+
+try
+
+ test_localisePRN
+catch exception
+  
+    
+end
+
 % try
 %       fprintf('Processing test_localiseCH_Left(3D)\n')
 %  test_localiseCH_Left('3D');

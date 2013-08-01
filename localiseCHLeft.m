@@ -1,33 +1,36 @@
 function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
 
 
-    leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
-    rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
-    
-    %% Detect curvature
+leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
+rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 
-    
-    sigma = 11;
-    [~, K] =  curvature(imageIn,sigma);
-    
-    K_eliptical = bsxfun(@max,zeros(size(K)),K);
-    K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
-    
+%% Detect curvature
+
+
+sigma = 11;
+[~, K] =  curvature(imageIn,sigma);
+
+K_eliptical = bsxfun(@max,zeros(size(K)),K);
+K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
+
 %Find first trough
-    [val1 ind1] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1);
-    
-    [val ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
-    indLips = find(ind>ind1(1),2,'first');
-   
+[val1 ind1] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1);
+
+[val ind] = findpeaks(K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))));
+indLips = find(ind>ind1(1),2,'first');
+if size(indLips<3)
+    lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(1))) ;
+    upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind1(1)) );
+else
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind(indLips(2))) ;
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind(indLips(1))) );
-   
-      sigma2 = 8;
+end
+    sigma2 = 8;
     [H, ~] =  curvature(imageIn,sigma2);
     
     %%
     H_Masked_left = ones(size(imageIn)).*min(H(:));
-     H_Masked_left((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))))...
+    H_Masked_left((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))))...
         =H((mm2pixel(upper_limit):mm2pixel(lower_limit)),(mm2pixel(leftLimit_x):mm2pixel(AL_LeftCoordinates( 1))));
     
     %%

@@ -41,8 +41,8 @@ fprintf(test_localiseCHRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Er
 
 
 %%
-
-for imNo = 1:noImages
+ 
+for imNo =273
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
     [Output] = localiseCHRight(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);

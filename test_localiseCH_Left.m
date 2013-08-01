@@ -48,7 +48,7 @@ for imNo = 1:noImages
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
     [Output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);
     
-    ind_Img = strmatch(imageList{imNo},dbList);
+    ind_Img = strmatch(imageList{imNo},dbList); 
     ch_loc = Output.ChLeftLocation;
     x_error = abs(ch_loc(1) - landmarkLocations(15,1,ind_Img));
     y_error = abs(ch_loc(2) - landmarkLocations(15,2,ind_Img));

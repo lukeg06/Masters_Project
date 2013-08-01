@@ -26,8 +26,9 @@ addpath('C:\VSG_IPA_toolbox\')
 
 %%
 % Calculate Gaussian Curvature
-[~,K] = curvature(imageIn,sigma);
-
+[H,K] = curvature(imageIn,sigma);
+K(H>0) = 0;
+K(K<0) = 0;
 % Define search region around estimatedLocation
 estimatedLocation_pixels = round(mm2pixel(estimatedLocation));
 imageMasked = zeros(size(imageIn));
