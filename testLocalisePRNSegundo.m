@@ -22,7 +22,7 @@ test_localisePRNResultsFileID = fopen('C:\Documents and Settings\Luke\My Documen
 fprintf(test_localisePRNResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tEuc Error(mm)\n');
 
 
-for imNo =1
+for imNo =1:noImages
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
   [x,y,z] = range2xyz(imageIn);
@@ -33,9 +33,9 @@ for imNo =1
 % z =   repmat(z,1,size(z,1));
 
 %rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.03,0.015,'xNose_rows',16);
-  rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.003,0.003/10,'xNose_rows',16);
+%  rangeLmks = facialLandmarks_Segundo2010 (x, y, z,'kh_thresholds',0.003,0.003/10,'xNose_rows',16);
  %rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'kh_thresholds',0.00000003,0.00000003);
- %     rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'kh_thresholds',0.04,0.0003,'xNose_rows',16);
+     rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'kh_thresholds',0.04,0.0003,'xNose_rows',16);
      % rangeLmks = facialLandmarks_Segundo2010 (x, y,z,'xNose_rows',16);
     PRNLocation = pixel2mm([rangeLmks.landmarks2D_YX(1,2),rangeLmks.landmarks2D_YX(1,1)]);
    ind = strmatch(imageList{imNo},dbList);

@@ -1,5 +1,5 @@
 function [output] = localiseCHRight(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
-
+addpath('.\toolboxes\segundo2010');
 leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 
@@ -7,7 +7,7 @@ rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_Ri
 %% Detect curvature
 
 
-sigma = 11;
+sigma = 10;
 [~, K] =  curvature(imageIn,sigma);
 
 K_eliptical = bsxfun(@max,zeros(size(K)),K);
@@ -16,7 +16,7 @@ K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 %Find first trough
 [ind1] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1, 6 )';
 
-[ind] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))), 6 )';
+[ind] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))), 2 )';
 a= K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 valP = a(ind);
 
@@ -73,7 +73,7 @@ maxLocation = pixel2mm([p1(1) p1(2)]);
 
 
 %% Define 20mmx20mm window around detected peak;
-windowSizeTotal = [30 11]./3;
+windowSizeTotal = [11 30]./3;
 windowSize = windowSizeTotal./2;
 centerPoint = round(mm2pixel(maxLocation./3)); % round before to keep matlab happy
 

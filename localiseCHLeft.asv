@@ -1,13 +1,13 @@
 function [output] = localiseCHLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
 
-
+addpath('.\toolboxes\segundo2010');
 leftLimit_x = AL_LeftCoordinates(1) - (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 rightLimit_x = AL_RightCoordinates(1) + (0.7 * norm(AL_LeftCoordinates( 1)-AL_RightCoordinates( 1)));
 
 %% Detect curvature
 
 
-sigma = 11;
+sigma = 10;
 [~, K] =  curvature(imageIn,sigma);
 
 K_eliptical = bsxfun(@max,zeros(size(K)),K);
@@ -16,14 +16,13 @@ K_eliptical(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 %Find first trough
 [ind1] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))).*-1, 6 )';
 
-[ind] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))), 6 )';
+[ind] = peakFind_1d( K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1))), 2 )';
 a= K(mm2pixel(prncoordinates( 2)):end,mm2pixel(prncoordinates( 1)));
 valP = a(ind);
 
 indSubPrn = find(ind>ind1(1));
 %[valChin indChin] = max(valP(indSubPrn));
-indChin = 
-indLips = indSubPrn(indSubPrn<=indSubPrn(indChin));
+indLips = indSubPrn(indSubPrn<=indSubPrn(end));
 
 
 if size(indLips,2)<3
@@ -33,7 +32,7 @@ if size(indLips,2)<3
     % the trough after the nose and the one before the chin as the limits.
  
     
-    ind_chinTrough = find(ind1<ind(indLips(indChin)),1,'last');
+    ind_chinTrough = find(ind1<ind(indLips(end)),1,'last');
     lower_limit = pixel2mm(mm2pixel(prncoordinates( 2)) + ind1(ind_chinTrough)) ;
     %trough after nose
     upper_limit = pixel2mm((mm2pixel(prncoordinates( 2)) + ind1(1)) );
@@ -146,4 +145,4 @@ end
     [~,p] = max(a(:));
     [c1(2),c1(1)] = ind2sub(size(a),p);
     
-    output.ChLeftLocation = pixel2mm(c1.*3);
+   output.ChLeftLocation = pixel2mm(c1.*3);

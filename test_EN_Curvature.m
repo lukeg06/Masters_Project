@@ -29,6 +29,9 @@ AL_RightCoordinates = A ;clear A;
 imageList = importdata('C:\Databases\Texas3DFR\Partitions\test.txt');
 noImages = size(imageList,1);
 
+savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\EN_left_Locations_curvature','.txt');
+
+en_Left_LocationFileID = fopen(savefilename1,'w');
 %%
 for i = 1:noImages
   
@@ -82,7 +85,7 @@ K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2
 
 %%
 %Find location of global maximum
-imageMasked = K_masked_right;
+imageMasked = K_masked_left;
 [val ind]= max(imageMasked(:));
 [k,j] = ind2sub(size(imageMasked),ind);
 % Isolate all pixels with maximum value
@@ -99,13 +102,14 @@ end
 maxLocation = pixel2mm([p1(1) p1(2)]);
 
 
+
 ind_Img = strmatch(imageList{i},dbList);
   %Calute error & print to file
-   y_error(i) = abs(maxLocation(1) - landmarkLocations(8,1,ind_Img));
-   x_error(i) = abs(maxLocation(2) - landmarkLocations(8,2,ind_Img));
-   euclidean_error(i) = norm(maxLocation - landmarkLocations(8,:,ind_Img));
+   y_error(i) = abs(maxLocation(1) - landmarkLocations(4,1,ind_Img));
+   x_error(i) = abs(maxLocation(2) - landmarkLocations(4,2,ind_Img));
+   euclidean_error(i) = norm(maxLocation - landmarkLocations(4,:,ind_Img));
 
-
+fprintf(en_Left_LocationFileID,'%f\t%f\n',maxLocation(1),maxLocation(2));
 end
 
 
