@@ -105,25 +105,14 @@ maxLocation = pixel2mm([p1(1) p1(2)]);
 
 ind_Img = strmatch(imageList{i},dbList);
   %Calute error & print to file
-   y_error(i) = abs(maxLocation(1) - landmarkLocations(4,1,ind_Img));
-   x_error(i) = abs(maxLocation(2) - landmarkLocations(4,2,ind_Img));
-   euclidean_error(i) = norm(maxLocation - landmarkLocations(4,:,ind_Img));
+   y_error(i) = abs(maxLocation(1) - landmarkLocations(5,1,ind_Img));
+   x_error(i) = abs(maxLocation(2) - landmarkLocations(5,2,ind_Img));
+   euclidean_error(i) = norm(maxLocation - landmarkLocations(5,:,ind_Img));
 
-fprintf(en_Left_LocationFileID,'%f\t%f\n',maxLocation(1),maxLocation(2));
+fprintf(en_Left_LocationFileID,'%f\t%f\n',pixel2mm(maxLocation(1)),pixel2mm(maxLocation(2)));
 end
 
 
 
 
 
-
-%% Define 20mmx20mm window around detected peak;
-windowSizeTotal = [20 20];
-windowSize = windowSizeTotal./2;
-imageMaskedFinal = zeros(size(imageIn));
-image1 = imageIn;
-centerPoint = round(mm2pixel(maxLocation)); % round before to keep matlab happy
-imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-    = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
