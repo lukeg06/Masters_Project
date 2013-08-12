@@ -27,12 +27,12 @@ H_concave_bin = bsxfun(@eq,H_concave,H);
 
 K_concave = bsxfun(@times,H_concave_bin,K);
 
-K_masked_left = zeros(size(K_concave));
+K_masked_left = ones(size(K)).* min(K_concave(:));
 K_masked_left(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x));
-
-K_masked_right = zeros(size(K));
+K_masked_left(K_masked_left == 0) = min(K_concave(:));
+K_masked_right = ones(size(K)).* min(K_concave(:));
 K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x));
-
+K_masked_right(K_masked_left == 0) = min(K_concave(:));
 %%
 %Find location of global maximum
 imageMasked = K_masked_left;
@@ -66,13 +66,13 @@ centerPoint = round(mm2pixel(maxLocation./3)); % round before to keep matlab hap
 %% Generate Bank
 filterBank = FilterBank();
 response3D = filterBank.filterImage(imresize(imageIn,1/3));
-responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+responseMaskedRegion3D = response3D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
 clear response3D;
 
 response2D = filterBank.filterImage(imResize(imageIn2D,1/3));
-responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+responseMaskedRegion2D = response2D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
 clear response2D;
 
 %%
@@ -124,8 +124,8 @@ c = jetIndex(outCalculateSimilarity.index,:);
 a = zeros(size(imageIn));
 b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
 b(c(1),c(2)) = 1;
-a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
+a((centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1)))) ...
     = b;
 
 [~,p] = max(a(:));

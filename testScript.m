@@ -4,14 +4,14 @@ errorLogfilePath = 'C:\Documents and Settings\Luke\My Documents\Masters_Project\
 testLog = fopen('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\testLog','w');
 ans_out = inputdlg({'Please enter test description'},'Test',1,{'0'});
 fprintf(testLog,ans_out{:});
-% 
-% try
-%       fprintf('Processing test_localiseCH_Left(2D3D)\n')
-%  test_localiseCH_Right('2D + 3D');
-% catch exception
-%     logError('CH LRight 2D + 3D',exception,errorLogfilePath)
-%     
-% end
+
+try
+     
+ frgctest;
+catch exception
+   
+    
+end
 
 % 
 % try
@@ -40,7 +40,7 @@ catch exception
     
 end
 
-% 
+
 
 
 try

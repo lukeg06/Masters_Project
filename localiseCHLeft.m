@@ -80,13 +80,13 @@ end
     %% Generate Bank
     filterBank = FilterBank();
     response3D = filterBank.filterImage(imresize(imageIn,1/3));
-    responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-        (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+    responseMaskedRegion3D = response3D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+        (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
     clear response3D;
     
     response2D = filterBank.filterImage(imresize(imageIn2D,1/3));
-    responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-        (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+    responseMaskedRegion2D = response2D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+        (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
     clear response2D;
     
     %%
@@ -135,14 +135,14 @@ end
     [outCalculateSimilarity] =  calculateSimilarity(jets,'CH Left',method,jetIndex);
     c = jetIndex(outCalculateSimilarity.index,:);
     
-    a = zeros(size(imageIn));
-    b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
-    b(c(1),c(2)) = 1;
-    a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-        (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-        = b;
-    
-    [~,p] = max(a(:));
-    [c1(2),c1(1)] = ind2sub(size(a),p);
+   a = zeros(size(imageIn));
+b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
+b(c(1),c(2)) = 1;
+a((centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1)))) ...
+    = b;
+
+[~,p] = max(a(:));
+[c1(2),c1(1)] = ind2sub(size(a),p);
     
    output.ChLeftLocation = pixel2mm(c1.*3);

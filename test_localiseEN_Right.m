@@ -3,6 +3,9 @@ function test_localiseEN_Right(method)
 
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
+if ~exist('method','var')
+   method = '2D + 3D' ;
+end
 %Define paths etc
 landmarkPath = 'C:\Databases\Texas3DFR\ManualFiducialPoints\';
 DBpath = 'C:\Databases\Texas3DFR\PreprocessedImages\';

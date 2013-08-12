@@ -32,7 +32,7 @@ K(K<0) = 0;
 % Define search region around estimatedLocation
 estimatedLocation_pixels = round(mm2pixel(estimatedLocation));
 imageMasked = zeros(size(imageIn));
-imageMasked((estimatedLocation_pixels(2) - round(25/0.32)):(estimatedLocation_pixels(2) + round(25/0.32)),(estimatedLocation_pixels(1) - round(21/0.32)):(estimatedLocation_pixels(1) + round(21/0.32))) = K((estimatedLocation_pixels(2) - round(25/0.32)):(estimatedLocation_pixels(2) + round(25/0.32)),(estimatedLocation_pixels(1) - round(21/0.32)):(estimatedLocation_pixels(1) + round(21/0.32)));
+imageMasked((estimatedLocation_pixels(2) - mm2pixel(25)):(estimatedLocation_pixels(2) + mm2pixel(25)),(estimatedLocation_pixels(1) - mm2pixel(21)):(estimatedLocation_pixels(1) + mm2pixel(21))) = K((estimatedLocation_pixels(2) - mm2pixel(25)):(estimatedLocation_pixels(2) + mm2pixel(25)),(estimatedLocation_pixels(1) - mm2pixel(21)):(estimatedLocation_pixels(1) + mm2pixel(21)));
 
 %Find location of global maximum
 

@@ -29,8 +29,8 @@ for imNo =1:noImages
     [PRNLocation] = localisePRN(imageIn,estimatedLocation,17,'false');
     %AL localisation
     % ...... Need to tidy
-    ALLeftLocation =
-    ALRightLocation =
+    ALLeftLocation = Output.ALLocation(1,:);
+    ALRightLocation =Output.ALLocation(2,:);
     %EN localisation
     [Output] = localiseENLeft(imageIn,imageIn2D,PRNLocation,ALLeftLocation,ALRightLocation,'2D + 3D');
     ENLeftLocation = Output.EnLeftLocation;

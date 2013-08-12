@@ -1,6 +1,10 @@
 %Script to localise left EN.
 
 function test_localiseEN_Left(method)
+
+if ~exist('method','var')
+   method = '2D + 3D' ;
+end
 imageList2D = importdata('C:\Databases\Texas3DFR\Partitions\test_2D.txt');
 
 %Define paths etc

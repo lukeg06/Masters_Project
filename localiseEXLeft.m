@@ -20,30 +20,24 @@ windowSize = windowSizeTotal./2;
 imageMaskedFinal = zeros(size(imageIn));
 image1 = imageIn;
 centerPoint = round(mm2pixel(maxLocation./3)); 
-if centerPoint(1) - round(windowSize(1)/0.32) < 1
+if centerPoint(1) - mm2pixel(windowSize(1)) < 1
    
-    centerPoint(1) = round(windowSize(1)/0.32) +1;
+    centerPoint(1) = mm2pixel(windowSize(1)) +1;
 end
-% round before to keep matlab happy
-% imageMaskedFinal((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
-%     = image1((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-%     (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
-
-% Load
 
 
-% Generate Bank
+%% Generate Bank
 filterBank = FilterBank();
 response3D = filterBank.filterImage(imresize(imageIn,1/3));
-responseMaskedRegion3D = response3D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+responseMaskedRegion3D = response3D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
 clear response3D;
 
 response2D = filterBank.filterImage(imResize(imageIn2D,1/3));
-responseMaskedRegion2D = response2D(:,(centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32)));
+responseMaskedRegion2D = response2D(:,(centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1))));
 clear response2D;
+
 
 %
 k = 0;
@@ -93,8 +87,8 @@ c = jetIndex(outCalculateSimilarity.index,:);
 a = zeros(size(imageIn));
 b = zeros(size(responseMaskedRegion3D,2),size(responseMaskedRegion3D,3));
 b(c(1),c(2)) = 1;
-a((centerPoint(2) - round(windowSize(2)/0.32)):(centerPoint(2) + round(windowSize(2)/0.32)),...
-    (centerPoint(1) - round(windowSize(1)/0.32)):(centerPoint(1) + round(windowSize(1)/0.32))) ...
+a((centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSize(2))),...
+    (centerPoint(1) - mm2pixel(windowSize(1))):(centerPoint(1) + mm2pixel(windowSize(1)))) ...
     = b;
 
 [~,p] = max(a(:));
