@@ -35,8 +35,8 @@ noImages = size(imageList,1);
 
 % Define savefile paths
 %opex files for writing results
-savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\CH_left_Locations_','estimate','.txt');
-savefilename2 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseCHLeftResults_','estimate','.txt');
+savefilename1  = strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\CH_right_Locations_','estimate','.txt');
+savefilename2 =  strcat('C:\Documents and Settings\Luke\My Documents\Masters_Project\Results\test_localiseCHRightResults_','estimate','.txt');
 
 ch_Right_LocationFileID = fopen(savefilename1,'w');
 test_localiseCHRightResultsFileID = fopen(savefilename2,'w');
