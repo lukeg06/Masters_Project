@@ -41,7 +41,7 @@ fprintf(FileID,'sigma\tupper_lip_error\tlower_lip_error\n');
 sigma = 12;
 upper_lip_error = 0;
 lower_lip_error = 0;
-for imNo = 457
+for imNo = 1:noImages
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
     
