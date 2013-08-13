@@ -46,11 +46,11 @@ fprintf(test_localiseENRightResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Er
 
 %%
 
-for imNo = 1:noImages
+for imNo = 2
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
-    [Output] = localiseENRight(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method);
+    [Output] = localiseENRight(imageIn,imageIn2D,prncoordinates(imNo,:),AL_LeftCoordinates(imNo,:),AL_RightCoordinates(imNo,:),method,'true');
     
     ind_Img = strmatch(imageList{imNo},dbList);
     en_loc = Output.EnRightLocation;

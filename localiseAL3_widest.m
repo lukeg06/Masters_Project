@@ -235,7 +235,7 @@ if strcmp(displayImage,'true')
     figure,
     subplot(2,2,1),imagesc(imageIn),title('Input Image');
     subplot(2,2,2),imagesc(imageNoseEdge),title('Nose Contour');
-    subplot(2,2,3),imshow(imageNoseEdge);
+    subplot(2,2,3),imagesc(imageNoseEdge);
     hold on;
     for i = 1:size(ind,2)
         plot(noseContour(ind,2),noseContour(ind,1),'*y');
@@ -243,7 +243,7 @@ if strcmp(displayImage,'true')
     plotLandmark(PRNLocation,gcf)
     hold off;title('Critical Points')
     
-    subplot(2,2,4),imshow(imageIn),title('AL Locations');
+    subplot(2,2,4),imagesc(imageIn),title('AL Locations');
     hold on;
     plot(mm2pixel(Output.ALLocation(1,1)),mm2pixel(Output.ALLocation(1,2)),'*m');
     plot(mm2pixel(Output.ALLocation(2,1)),mm2pixel(Output.ALLocation(2,2)),'*m');

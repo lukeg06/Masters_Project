@@ -1,4 +1,4 @@
-function [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
+function [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method,displayImage)
 
 %% Define Search Region
 
@@ -132,3 +132,18 @@ a((centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSi
 [c1(2),c1(1)] = ind2sub(size(a),p);
 
 Output.EnLeftLocation = pixel2mm(c1.*3);
+
+if strcmp(displayImage,'true')
+    figure,
+    subplot(2,2,1),imshow(imageIn2D),title('Input Image');
+    a = imageIn2D;
+    a(K<0) = 0;
+    subplot(2,2,2),imagesc(a),title('Regions of Concave Gaussian Curvature');
+    subplot(2,2,3),imagesc(K_masked_left);title('Gaussian Curvature of Masked Region')
+
+    subplot(2,2,4),imshow(imageIn2D),title('En Left Location');
+    hold on;
+    plotLandmark(Output.EnLeftLocation )
+    hold off;
+    
+end

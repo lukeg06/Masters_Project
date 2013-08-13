@@ -1,4 +1,4 @@
-function [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method)
+function [Output] = localiseENLeft(imageIn,imageIn2D,prncoordinates,AL_LeftCoordinates,AL_RightCoordinates,method,displayImage)
 
 %% Define Search Region
 
@@ -29,10 +29,10 @@ K_concave = bsxfun(@times,H_concave_bin,K);
 
 K_masked_left = ones(size(K)).* min(K_concave(:));
 K_masked_left(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(leftLimit_x):mm2pixel(prn_x));
-K_masked_left(K_masked_left == 0) = min(K_concave(:);
+K_masked_left(K_masked_left == 0) = min(K_concave(:));
 K_masked_right = ones(size(K)).* min(K_concave(:));
 K_masked_right(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x)) = K_concave(mm2pixel(upperLimit_y):mm2pixel(lowerLimit_y),mm2pixel(prn_x):mm2pixel(rightLimit_x));
-
+K_masked_right(K_masked_left == 0) = min(K_concave(:));
 %%
 %Find location of global maximum
 imageMasked = K_masked_left;
@@ -132,3 +132,16 @@ a((centerPoint(2) - mm2pixel(windowSize(2))):(centerPoint(2) + mm2pixel(windowSi
 [c1(2),c1(1)] = ind2sub(size(a),p);
 
 Output.EnLeftLocation = pixel2mm(c1.*3);
+
+if strcmp(displayImage,'true')
+    figure,
+    subplot(2,2,1),imagesc(imageIn),title('Input Image');
+    subplot(2,2,2),imagesc(K_concave),title('Regions of ');
+    subplot(2,2,3),imagesc(K_masked_left);title('Gaussian Curvature of Masked Region')
+
+    subplot(2,2,4),imagesc(imageIn),title('En Left Location');
+    hold on;
+    plotLandmark(Output.EnLeftLocation )
+    hold off;
+    
+end

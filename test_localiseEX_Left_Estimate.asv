@@ -37,7 +37,7 @@ test_localiseEXLeftResultsFileID = fopen(savefilename2,'w');
 fprintf(test_localiseEXLeftResultsFileID,'No.\tX Error(mm)\tY Error(mm)\tRad Error(mm)\n');
 
 %% calculate extimate for outer eye corner
-for imNo =1:noImages
+for imNo =897
     
     imageIn = im2double(imread(strcat(DBpath,imageList{imNo})));
     imageIn2D = rgb2gray(im2double(imread(strcat(DBpath,imageList2D{imNo}))));
@@ -48,8 +48,8 @@ ex_left_estimate = [(EN_LeftCoordinates(imNo,1) - norm(EN_LeftCoordinates(imNo,1
    ex_right_estimate = [(EN_RightCoordinates(imNo,1) + norm(EN_LeftCoordinates(imNo,1) - EN_RightCoordinates(imNo,1))),...
     (EN_LeftCoordinates(imNo,2) + EN_RightCoordinates(imNo,2))/2];
 
-if ex_left_estimate(1) ==0
-    ex_left_estimate(1) = 0.32;
+if ex_left_estimate(1) <0
+    ex_left_estimate(2) = 3;
 end
 
  ExLeftLocation = ex_left_estimate;

@@ -42,7 +42,7 @@ for i = 1:noImages
     
     imageIn = im2double(imread(strcat(DBpath,imageList{i})));
     prnLocation = prncoordinates(i,:);
-    [Output] =localiseAL3_widest(imageIn,prnLocation,[50 42],21,'false','right','false');
+    [Output] =localiseAL3_widest(imageIn,prnLocation,[50 42],21,'true','right','false');
     ALLocation = Output.ALLocation;
     
 %     
